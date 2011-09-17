@@ -1,0 +1,45 @@
+<html>
+<head>
+<script type="text/javascript">
+
+</script>
+</head>
+<body>
+	
+	<input type="file" id="files" name="files[]">
+	<output id="list"></output>
+	<script>
+	if (window.File && window.FileReader && window.FileList && window.Blob) {
+	  // Great success! All the File APIs are supported.
+	} else {
+	  alert('The File APIs are not fully supported in this browser.');
+	}
+	
+	document.getElementById('files').addEventListener('change', handleFileSelect, false);
+	
+function handleFileSelect(evt) 
+{
+    var file = evt.target.files[0]; // FileList object
+    // files is a FileList of File objects. List some properties.
+	
+	var reader = new FileReader();
+	
+	result = reader.readAsDataURL(file);
+	
+	reader.onload = function (oFREvent) 
+	{  
+		document.getElementById("smu").src = oFREvent.target.result;  
+	};
+	
+	output = reader.readAsText(file);
+	alert(output)
+}
+
+
+	
+	
+	
+	</script>
+	<img src="" id="smu" style="border: 1px solid black;">
+</body>
+</html>
