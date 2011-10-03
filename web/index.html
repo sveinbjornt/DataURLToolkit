@@ -1,45 +1,145 @@
 <html>
 <head>
-<script type="text/javascript">
-
-</script>
+	<meta charset=utf-8>
+	<script type="text/javascript" src="dataurl.js"></script>
+	<title>DataURL.net</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+	<script type="text/javascript" src="jquery.min.js"></script>
+	<script type="text/javascript" src="dataurl.js"></script>
 </head>
 <body>
+
+<header>
+
+<h1>❮ DataURL.net ❯</h1>
+<h2>✸ Your one-stop HTML5 spot for all things DataURL ✸</h2>
+</header>
+
+<nav>
+	<ul>
+		<li class="litem" name="about"><a href="#" onClick="showPage('about');">About</a></li>
+		<li class="litem" name="dataconverter" id="selected" onclick=""><a href="#" onClick="showPage('dataconverter');">Data URL Maker</a></li>
+		<li class="litem" name="cssoptimizer"><a href="#" onClick="showPage('cssoptimizer');">CSS Optimizer</a></li>
+		<li class="litem" name="downloads"><a href="#" onClick="showPage('downloads');">Downloads</a></li>
+	</ul>
+</nav>
+
+<article>
+	<div id="about" class="page">
+	About
+	</div>
 	
-	<input type="file" id="files" name="files[]">
-	<output id="list"></output>
-	<script>
-	if (window.File && window.FileReader && window.FileList && window.Blob) {
-	  // Great success! All the File APIs are supported.
-	} else {
-	  alert('The File APIs are not fully supported in this browser.');
-	}
+	<!-- DATA URL MAKER -->
+	<div id="dataconverter" class="page">
+		
+		<div id="fileselectform">
+			<p>Select or drag a file to get the Data URL: 
+				<input type='file' id='fileinput'>
+			</p>
+		</div>
+		
+		<div id="droparea">
+			<br>
+			<br>
+			Drag file here
+		</div>
+		
+		<div id="dataurldisplay">
+			
+			<div id="dataurltextwrap">
+				
+				<p id="dataurlfilename">Data URL</p>
+				<textarea id="dataurltextarea"></textarea>
+				<p id="dataurlfilesize"></p>
+				<input type="button" id="copytoclipboard" value="Copy to Clipboard">
+			</div>
+			
+			<div id="dataurlimgview">
+				<p>Image preview</p>
+				<div id="dataurlimg"></div>
+			</div>
+			
+			<div style="clear: both;">
+				
+			</div>
+		</div>
+	</div>
 	
-	document.getElementById('files').addEventListener('change', handleFileSelect, false);
+	<!-- CSS OPTIMIZER -->
+	<div id="cssoptimizer" class="page">
+		<div id="fileselectform">
+			<p>Specify remote CSS URL 
+				<input type='text' id='cssurl' value="http://">
+				<input type="button" value="Optimize" onClick="OptimizeCSS();">
+			</p>
+			<p style="font-size: 12px;">
+				Encoded all images smaller than 
+				<select id="css_sizelimit">
+					<option value="1">1 KB</option>
+					<option value="2">2 KB</option>
+					<option value="3">3 KB</option>
+					<option value="4" selected>4 KB</option>
+					<option value="5">5 KB</option>
+					<option value="6">6 KB</option>
+					<option value="7">7 KB</option>
+					<option value="8">8 KB</option>
+					<option value="9">9 KB</option>
+					<option value="10">10 KB</option>
+					<option value="15">15 KB</option>
+					<option value="20">20 KB</option>
+					<option value="25">25 KB</option>
+					<option value="30">30 KB</option>
+					<option value="40">40 KB</option>
+					<option value="50">50 KB</option>
+					<option value="75">75 KB</option>
+					<option value="100">100 KB</option>
+					<option value="10000000000">Infinity</option>
+				</select>	
+				|
+				<input type="checkbox" id="compress_css" name="compress">Compress CSS
+				<!--|
+				<input type="checkbox" name="optimize_pngs">Optimize PNGs-->
+			</p>
+		</div>
+		<hr class="separator">
+		<p style="text-align: center;"><img src="ajax-loader.gif" id="css_spinner" style="display:none;"></p>
+		<div id="css_stats_wrapper">
+			<div id="css_stats">
+				<p>Before</p>
+				<div id="pre_output"></div>
+			</div>
+			<div id="css_stats">
+				<p>After</p>
+				<div id="post_output"></div>
+			</div>
+			<div style="clear: both;"></div>
+			<br>
+			<div id="css_output_container">
+				<div id="css_downloadlink"></div>
+				
+				<p>Optimized CSS</p>
+				
+				<div id="css_output">
+				</div>
+			</div>
+		</div>
+	</div>
 	
-function handleFileSelect(evt) 
-{
-    var file = evt.target.files[0]; // FileList object
-    // files is a FileList of File objects. List some properties.
+	<div id="downloads" class="page">
+	Downloads
+	</div>
 	
-	var reader = new FileReader();
 	
-	result = reader.readAsDataURL(file);
-	
-	reader.onload = function (oFREvent) 
-	{  
-		document.getElementById("smu").src = oFREvent.target.result;  
-	};
-	
-	output = reader.readAsText(file);
-	alert(output)
-}
+</article>
+
+<script type="text/javascript" lang="javascript">
+     $(document).ready(Init);
+</script>
 
 
-	
-	
-	
-	</script>
-	<img src="" id="smu" style="border: 1px solid black;">
+<footer>
+	&copy; 2011 Sveinbjorn Thordarson.  Available under the Creative Commons License.
+</footer>
+
 </body>
 </html>
