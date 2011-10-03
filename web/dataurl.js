@@ -75,6 +75,8 @@ function OptimizeCSS ()
 	var limit = $('#css_sizelimit').val();
 	var compress = $('input:checkbox[name=compress]:checked').val();
 	
+	$('#css_spinner').css('display', 'block');
+	
 	var href = '/cgi-bin/dataurl.pl?action=optimize&compress=' + compress + '&size_limit=' + limit + '&file=' + $('#cssurl').val()
 	$.get(href, function(data) {
 		if (data == undefined) {
@@ -123,6 +125,7 @@ function OptimizeCSS ()
 		$("#css_downloadlink").html('<a href="' + data['css_link'] + '">⇓ Download Optimized CSS</a>')
 		$("#css_output_container").css('display', 'block');
 		// ProcessCSS(data);
+		$('#css_spinner').css('display', 'none');
 	});	
 }
 
