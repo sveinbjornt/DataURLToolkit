@@ -1,3 +1,5 @@
+#!/usr/bin/perl -w
+
 use strict; # yes, oh yes
 use utf8;
 use CGI;
@@ -7,9 +9,10 @@ use Image::Info qw(image_info);
 use MIME::Base64;
 use Compress::Zlib;
 use JSON;
+use MIME::Base64;
+use File::MimeInfo;
 
 binmode(STDOUT, ":utf8");
-
 
 local our $cgi = new CGI;
 local our $action = $cgi->param('action');
@@ -19,7 +22,34 @@ local our $compress = $cgi->param('compress');
 local our %cssinfo;
 
 
-if ($action eq 'optimize') 
+if ($action eq 'encode')
+{
+    # Read file data
+    my $data;
+    
+    my $mime_type = undef;
+    if ($is_image($file))
+    {
+        my $info = image_info(\$data);
+        my $mimetype = $info->{file_media_type};
+        my($image_width, $image_height) = dim($info);
+    }
+    else
+    {
+        my $mime_type = mimetype($file);
+    }
+    
+    if (!defined($mime_type)) { error('Unable to determine file mimetype.')}
+    
+    while ( <$file> ) { $data .= $_;  }
+    
+    my $enc = encode_base64($data, '');
+    my $daturl = "data:$mimetype;base64,$enc";
+    my %reply = ( dataurl => $dataurl)
+    
+    reply(\%reply);
+}
+elsif ($action eq 'optimize') 
 {    
     my $css = get($file);
     
@@ -65,7 +95,7 @@ if ($action eq 'optimize')
         my $full_url = urljoin($file, $url);
         my $data = get($full_url);
         
-        if (($url =~ m/\.jpg$/i or $url =~ m/\.png$/i or $url =~ m/\.gif$/i or $url =~ m/\.jpeg$/i) and length($data) <= $limit)
+        if (is_image($url) and length($data) <= $limit)
         {         
             my $info = image_info(\$data);
             my $mimetype = $info->{file_media_type};
@@ -88,7 +118,7 @@ if ($action eq 'optimize')
         $css =~ s/$origurl/$replace_map{$origurl}/ig;
         $cssinfo{dataurl_converted} += 1;
         $cssinfo{post}{ext_size} -= $ext_obj_sizes{$origurl};
-        if ($origurl =~ m/\.jpg$/i or $origurl =~ m/\.png$/i or $origurl =~ m/\.gif$/i or $origurl =~ m/\.jpeg$/i) 
+        if (is_image($origurl)) 
         {
             $cssinfo{post}{img_size} -= $ext_obj_sizes{$origurl};
         }
@@ -107,12 +137,31 @@ if ($action eq 'optimize')
     # }
     # 
     # print $css;
+    
+    reply(\%cssinfo);
+}
+
+sub reply
+{
+    my ($hashref) = @_;
     print "Content-Type: application/json\n\n";
-    print encode_json(\%cssinfo);
+    print encode_json($hashref);
     exit(0);
 }
 
+sub error
+{
+    my ($errmsg) = @_;
+    my %reply = ( error => $errmsg );
+    reply(\%reply);
+}
 
+sub is_image
+{
+    my ($str) = @_;
+    if ($str =~ m/\.jpg$/i or $str =~ m/\.png$/i or $str =~ m/\.gif$/i or $str =~ m/\.jpeg$/i) { return 1; }
+    return 0;
+}
 
 sub strip
 {

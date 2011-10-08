@@ -10,9 +10,16 @@ function showPage (pname)
 
 function handleFileSelect(evt) 
 {
-    var files = evt.target.files; // FileList object
-	var file = files[0];
-	ReadDataFile(file);
+    if (!has_file_apis()) 
+    {
+        
+    }
+    else
+    {
+        var files = evt.target.files; // FileList object
+    	var file = files[0];
+    	ReadDataFile(file);
+    }
 }
 
 function Init ()
@@ -31,7 +38,17 @@ function Init ()
 	}, true);
 	uploadPlace.addEventListener("drop", handleDrop, false);
 	
-	showPage('cssoptimizer');
+	if (!has_file_apis()) 
+	{
+	    $("#droparea").html('<br>File APIs not supported in this browser.  Use file select box.')
+	}
+	
+	showPage('dataurlmaker');
+}
+
+function has_file_apis ()
+{
+    return (window.File && window.FileReader && window.FileList && window.Blob);
 }
 
 function ReadDataFile (file)

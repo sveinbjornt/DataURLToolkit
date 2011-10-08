@@ -25,13 +25,13 @@
 use strict;
 use Image::Info qw(image_info dim);
 use MIME::Base64;
+use Getopt::Std;
 
 our $VERSION = 2.0;
 my $scriptname = 'dataurlmaker.pl';
 my $valid_opts = 'i'
 
 # Getopt
-$Getopt::Std::STANDARD_HELP_VERSION = 1; # so --help quits after usage string
 
 sub main::HELP_MESSAGE
 {
