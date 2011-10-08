@@ -3,54 +3,68 @@
 use strict; # yes, oh yes
 use utf8;
 use CGI;
-use URI::Split qw(uri_split uri_join);
 use LWP::Simple;
 use Image::Info qw(image_info);
 use MIME::Base64;
 use Compress::Zlib;
 use JSON;
+use IO::Scalar;
 use MIME::Base64;
-use File::MimeInfo;
-
-binmode(STDOUT, ":utf8");
+use File::Basename;
+use File::MimeInfo::Magic qw(mimetype);
 
 local our $cgi = new CGI;
 local our $action = $cgi->param('action');
-local our $file = $cgi->param('file');
-local our $limit = $cgi->param('size_limit') * 1024;
-local our $compress = $cgi->param('compress');
-local our %cssinfo;
 
+if($ENV{REQUEST_METHOD} ne 'POST') { error("Illegal request.", 403); }
 
 if ($action eq 'encode')
 {
     # Read file data
-    my $data;
-    
-    my $mime_type = undef;
-    if ($is_image($file))
+    my $filehandle = $cgi->upload('file');
+    my $data = undef;
+    while ( <$filehandle> ) { $data .= $_;  }
+
+    my $mime_type;
+    my $is_image = is_image($filehandle);
+    if ($is_image)
     {
         my $info = image_info(\$data);
-        my $mimetype = $info->{file_media_type};
-        my($image_width, $image_height) = dim($info);
+        $mime_type = $info->{file_media_type};
     }
     else
     {
-        my $mime_type = mimetype($file);
+        my $iofh = new IO::Scalar \$data;
+        $mime_type = mimetype($iofh);
     }
     
-    if (!defined($mime_type)) { error('Unable to determine file mimetype.')}
-    
-    while ( <$file> ) { $data .= $_;  }
+    if (!defined($mime_type)) { error('Unable to determine file mimetype.'); }
     
     my $enc = encode_base64($data, '');
-    my $daturl = "data:$mimetype;base64,$enc";
-    my %reply = ( dataurl => $dataurl)
+    my $dataurl = "data:$mime_type;base64,$enc";
+    my %reply = (   dataurl     => $dataurl,
+                    size        => length($dataurl),
+                    origsize    => length($data),
+                    filename    => basename($filehandle),
+                    image       => $is_image,
+                    gzipsize    => length(Compress::Zlib::compress($dataurl))
+                );
     
     reply(\%reply);
 }
 elsif ($action eq 'optimize') 
 {    
+    my $file = $cgi->param('css_file_url');
+    if (!defined($file)) { error("Missing file parameter"); }
+    
+    my $limit = $cgi->param('size_limit');
+    if (!defined($limit)) { $limit = 4096; } else { $limit *= 1024; }
+
+    my $compress = $cgi->param('compress');
+    if (!defined($compress)) { $compress = 0; }
+
+    my %cssinfo;
+    
     my $css = get($file);
     
     # Find and clean all strings contained within url()
@@ -143,17 +157,22 @@ elsif ($action eq 'optimize')
 
 sub reply
 {
-    my ($hashref) = @_;
-    print "Content-Type: application/json\n\n";
-    print encode_json($hashref);
+    my ($hashref, $status) = @_;
+    binmode(STDOUT, ":utf8");
+    if (!defined($status)) { $status = '200 OK'; }
+    print "Status: $status\n";
+    print STDOUT "Content-Type: application/json\n\n";
+    print STDOUT encode_json($hashref);
     exit(0);
 }
 
 sub error
 {
-    my ($errmsg) = @_;
+    my ($errmsg, $status) = @_;
+    if (!defined($status)) { $status = '500'; }
     my %reply = ( error => $errmsg );
-    reply(\%reply);
+    reply(\%reply, $status);
+    exit(1);
 }
 
 sub is_image

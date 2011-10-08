@@ -1,17 +1,22 @@
 
-function showPage (pname)
+function ShowPage (pname)
 {
+    // show relevant block for the page
 	$(".page").css("display", "none");
-	$("#"+pname).css("display","block");
+	$("#body_" + pname).css("display","block");
 	
+	// Remove selected style from all, add to selected item
 	$(".litem").attr("id","");
 	$('li[name=' + pname + ']').attr("id", 'selected');
 }
 
-function handleFileSelect(evt) 
+function HandleFileSelect(evt) 
 {
-    if (!has_file_apis()) 
+    if (!HasFileAPIs()) 
     {
+        var frame = document.getElementById('postframe');
+        frame.onload = DataURLLoaded;
+        $("#upload-form").submit();
         
     }
     else
@@ -22,31 +27,61 @@ function handleFileSelect(evt)
     }
 }
 
-function Init ()
+function DataURLLoaded ()
 {
-	document.getElementById('fileinput').addEventListener('change', handleFileSelect, false);
-	var uploadPlace =  document.getElementById('droparea');
-	uploadPlace.addEventListener("dragover", function(event) {
-		event.stopPropagation(); 
-		event.preventDefault();
-	}, true);
-	uploadPlace.addEventListener("drop", handleDrop, false);
-	uploadPlace = document.getElementById('dataurldisplay');
-	uploadPlace.addEventListener("dragover", function(event) {
-		event.stopPropagation(); 
-		event.preventDefault();
-	}, true);
-	uploadPlace.addEventListener("drop", handleDrop, false);
-	
-	if (!has_file_apis()) 
-	{
-	    $("#droparea").html('<br>File APIs not supported in this browser.  Use file select box.')
+    if ($("#postframe").contents().text() == '') { return; }
+    
+    var dict = eval('(' + $("#postframe").contents().text() + ')');
+    
+    $("#dataurltextarea").html(dict['dataurl']);
+	$("#dataurlfilename").html(dict['filename']);
+	$("#droparea").css('display', 'none');
+	$("#dataurlfilesize").html('Data URL Size: ' + dict['size'] + ' bytes<br>Gzipped URL size: ' + dict['gzipsize'] + ' bytes<br>Original size: ' + dict['origsize'] + ' bytes');
+	if (dict['image']) {
+		$("#dataurlimg").html('<img src="' + dict['dataurl'] + '">')
+	} else {
+		$("#dataurlimg").html('Not an image');
 	}
-	
-	showPage('dataurlmaker');
+	$("#dataurldisplay").css('display', 'block');
 }
 
-function has_file_apis ()
+function Init ()
+{
+    document.getElementById('fileinput').addEventListener('change', HandleFileSelect, false);
+    
+	if (HasFileAPIs()) 
+	{
+    	var uploadPlace =  document.getElementById('droparea');
+    	uploadPlace.addEventListener("dragover", function(event) {
+    		event.stopPropagation(); 
+    		event.preventDefault();
+    	}, true);
+    	uploadPlace.addEventListener("drop", handleDrop, false);
+    	uploadPlace = document.getElementById('dataurldisplay');
+    	uploadPlace.addEventListener("dragover", function(event) {
+    		event.stopPropagation(); 
+    		event.preventDefault();
+    	}, true);
+    	uploadPlace.addEventListener("drop", handleDrop, false);
+    	
+    	$("#droparea").html('<br><br>Drag file here');
+    	$("#fileselectform").css('display', 'block');
+	}
+	else
+	{
+	}
+	
+    if (window.location.hash)
+    {
+	    ShowPage(window.location.hash.substring(1)); 
+	}
+	else
+	{
+	    ShowPage('about');
+	}
+}
+
+function HasFileAPIs ()
 {
     return (window.File && window.FileReader && window.FileList && window.Blob);
 }
@@ -60,7 +95,6 @@ function ReadDataFile (file)
   		return function(e) {
 			var suffix = theFile.name.split('.').pop();
 			$("#dataurltextarea").html(e.target.result);
-			$("#dataurldisplay").css('display', 'block');
 			$("#dataurlfilename").html(theFile.name)
 			$("#droparea").css('display', 'none');
 			$("#dataurlfilesize").html('Data URL Size: ' + e.target.result.length + ' bytes<br>Original size: ' + theFile.size + ' bytes');
@@ -70,6 +104,7 @@ function ReadDataFile (file)
 			} else {
 				$("#dataurlimg").html('Not an image');
 			}
+			$("#dataurldisplay").css('display', 'block');
 	};})(file);
 
 	// Read in the image file as a data URL.
@@ -94,10 +129,10 @@ function OptimizeCSS ()
 	
 	$('#css_spinner').css('display', 'block');
 	
-	var href = '/cgi-bin/dataurl.pl?action=optimize&compress=' + compress + '&size_limit=' + limit + '&file=' + $('#cssurl').val()
+	var href = '/cgi-bin/dataurl.pl?action=optimize&compress=' + compress + '&size_limit=' + limit + '&css_file_url=' + $('#cssurl').val()
 	$.get(href, function(data) {
 		if (data == undefined) {
-			 alert("NO DATA!");
+			 alert("ERROR:  NO DATA FROM SERVER.");
 		}
 		
 		$("#pre_output").html('');
@@ -179,28 +214,4 @@ function cmp (data, key)
 		na = '<em>' + a + '</em>';
 	}
 	return [na, nb]
-}
-
-function ProcessURLString (urlstr)
-{
-	urlstr = urlstr.substr(4, urlstr.length-5);
-	urlstr = urlstr.trim();
-	return urlstr;
-}
-
-function ProcessCSS (cssdata)
-{
-	var str = cssdata.match(/(url\(.+\))/);
-	for (var i = 0; i < str.length-1; i++) 
-	{
-		imgurl = ProcessURLString(str[i]);
-		var img = new Image();
-		img.src=imgurl;
-			
-		//alert(data);
-		var bindata = LoadBinaryResourceAsBase64(imgurl);
-		$("#cssoutput").html(bindata)
-		
-		//alert(Base64.encode(data));
-	}
 }

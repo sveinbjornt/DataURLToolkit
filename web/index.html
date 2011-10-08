@@ -1,7 +1,6 @@
 <html>
 <head>
-	<meta charset=utf-8>
-	<script type="text/javascript" src="dataurl.js"></script>
+	<meta charset="utf-8">
 	<title>DataURL.net</title>
     <link rel="stylesheet" href="style.css" type="text/css">
 	<script type="text/javascript" src="jquery.min.js"></script>
@@ -17,31 +16,199 @@
 
 <nav>
 	<ul>
-		<li class="litem" name="about"><a href="#about" onClick="showPage('about');">About</a></li>
-		<li class="litem" name="dataurlmaker" id="selected" onclick=""><a href="#dataurlmaker" onClick="showPage('dataurlmaker');">Data URL Maker</a></li>
-		<li class="litem" name="cssoptimizer"><a href="#cssoptimizer" onClick="showPage('cssoptimizer');">CSS Optimizer</a></li>
-		<li class="litem" name="downloads"><a href="#downloads" onClick="showPage('downloads');">Downloads</a></li>
+		<li class="litem" name="about" onClick="ShowPage('about');"><a href="#about">About</a></li>
+		<li class="litem" name="dataurlmaker" id="selected" onClick="ShowPage('dataurlmaker');"><a href="#dataurlmaker">Data URL Maker</a></li>
+		<li class="litem" name="cssoptimizer"onClick="ShowPage('cssoptimizer');"><a href="#cssoptimizer">CSS Optimizer</a></li>
+		<li class="litem" name="downloads" onClick="ShowPage('downloads');"><a href="#downloads">Downloads</a></li>
 	</ul>
 </nav>
 
 <article>
-	<div id="about" class="page">
-	About
+	<div id="body_about" class="page">
+		
+		<div style="float: right; width: 200px; background-color: #eee; font-size: 0.9em; padding: 15px; margin-left: 25px;">
+			<ul>
+				<li><a href="#what">What are Data URLs?</a></li>
+				<li><a href="#history">History</a></li>
+				<li><a href="#look">How do they look?</a></li>
+				<li><a href="#advantages">Advantages</a></li>
+				<li><a href="#disadvantages">Disadvantages</a></li>
+				<li><a href="#browser">Browser support</a></li>
+			</ul>
+		</div>
+		
+		<p><strong>DATAURL.NET</strong> is home to some open source tools for creating and working with Data URLs 
+			(<a href="http://tools.ietf.org/html/rfc2397">RFC 2397</a>).  
+		</p>
+	
+		<p>Two of these tools are web-based and available here.  
+		
+			<ul>
+				<li><a href="#dataurlmaker" onClick="ShowPage('dataurlmaker');">Data URL Maker</a> converts files to Data URLs.</li>
+				<li><a href="#cssoptimizer" onClick="ShowPage('cssoptimizer');">CSS Optimizer</a> optimizes CSS files by embedding external images as Data URLs.</li>
+			</ul>
+	
+		<p>Various modules, code examples and GUI/command line tools for UNIX and Mac OS X are available on the <a href="#downloads">Downloads page</a>.</p>
+	
+		<br>
+	
+		<hr class="separator">
+	
+		<br>
+	
+		<div class="small">
+			<h3 id="what">What are Data URLs?</h3>
+
+			<p>Data URLs are a Uniform Resource Identifier scheme that allow you to include data items 
+				inline in a web page as if they were being referenced as external resources.  Data URLs 
+				are a form of Uniform Resource Locators, although they do not in fact remotely locate anything.  
+				Instead, the resource data is contained within the URL string itself as a 
+				<a href="http://en.wikipedia.org/wiki/Base64">base64-encoded</a> string.  This saves the 
+				browser from having to make additional HTTP requests for the external resources, and can 
+				thus increase page loading speed.</p>
+
+			<h3 id="history">History</h3>
+
+			<p>The data URL scheme was defined in <a href="http://tools.ietf.org/html/rfc2397">RFC 2397</a> 
+				specification of the <a href="http://www.ietf.org/">Internet Engineering Task Force</a>.  
+				Although the IETF published the Data URL specification in 1998, it was never formally adopted 
+				as a standard. However, the HTML 4.01 specification references the data URI scheme through 
+				which Data URLs are implemented, and after years of neglect, support for Data URLs in some 
+				form or another has now been implemented in all modern browsers, including Internet Explorer 8.</p>
+
+			<h3 id="look">What do Data URLs look like?</h3>
+
+			<p>Data URLs use the following syntax:</p>
+
+			<blockquote>data:[mimetype][;base64],[data]</blockquote>
+
+			<p>Let's say we have a small file icon image we want to embed in an HTML document. In that case, 
+				we would specify a mime type identifying the image (in this case, a GIF image) followed by 
+				the base64-encoded file data:</p>
+
+<blockquote>&lt;img width="11" height="14" src="data:image/gif;base64,R0lGOD
+lhCwAOAMQfAP////7+/vj4+Hh4eHd3d/v7+/Dw8HV1dfLy8ubm5vX19e3t7fr
+6+nl5edra2nZ2dnx8fMHBwYODg/b29np6eujo6JGRkeHh4eTk5LCwsN3d3dfX
+13Jycp2dnevr6////yH5BAEAAB8ALAAAAAALAA4AAAVq4NFw1DNAX/o9imAsB
+tKpxKRd1+YEWUoIiUoiEWEAApIDMLGoRCyWiKThenkwDgeGMiggDLEXQkDoTh
+CKNLpQDgjeAsY7MHgECgx8YR8oHwNHfwADBACGh4EDA4iGAYAEBAcQIg0Dk
+gcEIQA7" alt="File Icon"&gt;</blockquote>
+
+			<p>This HTML tag would display the following image:</p>
+
+<blockquote><img width="11" height="14" src="data:image/gif;base64,R0lGODlhCwAOAMQfAP////7+/vj4+Hh4eHd3d/v7+/Dw8HV1dfLy8ubm5vX19e3t7fr6+nl5edra2nZ2dnx8fMHBwYODg/b29np6eujo6JGRkeHh4eTk5LCwsN3d3dfX13Jycp2dnevr6////yH5BAEAAB8ALAAAAAALAA4AAAVq4NFw1DNAX/o9imAsBtKpxKRd1+YEWUoIiUoiEWEAApIDMLGoRCyWiKThenkwDgeGMiggDLEXQkDoThCKNLpQDgjeAsY7MHgECgx8YR8oHwNHfwADBACGh4EDA4iGAYAEBAcQIg0DkgcEIQA7" alt="File Icon"></blockquote>
+
+			<h3 id="advantages">Advantages of Data URLs</h3>
+
+			<p>Using Data URLs for the web can have several advantages:</p>
+
+			<ul>
+				<li>
+					<strong>Data URLs save HTTP requests.</strong>
+					<p>Data URLs can reduce the number of HTTP requests the browser needs to make to display an HTML document.  
+						Since the data is contained within the URL instead of being located in an external resource, no HTTP 
+						request needs to be made to display the content.  Web browsers are typically configured to use somewhere
+						between two and eight connections to a webserver at any given time.  Minimizing the number of browser 
+						requests is an important component of optimizing web page loading times: Data URLs can thus have beneficial 
+						effects on performance.</p>
+				</li>
+				<li>
+					<strong>Faster transfer of small files</strong>
+					<p>For transferring small files (< 1KB), Data URLs can result in faster downloading. Data transfers via TCP 
+						start slowly, and each external resource starts a new TCP connection to the server.  The transfer speed 
+						may thus be held back by the overhead of TCP communication.</p>
+				</li>
+				<li>
+					<strong>Less bandwidth usage (in certain cases)</strong> 
+					<p>Data URLs use less bandwidth whenever the overhead of encoding the data as a Data URL is smaller than 
+						the overhead of an HTTP request. For example, the required base64 encoding for an image 600 bytes long 
+						would be 800 bytes, so if an HTTP request required more than 200 bytes of overhead, the data URI would 
+						be more efficient.</p>
+				</li>
+				<li>
+					<strong>Faster HTTPS</strong>
+					<p>HTTPS requests have much greater overhead than ordinary HTTP requests duing to SSL encryption, etc.  
+						If your website is served over HTTPS, providing resources via Data URLs can improve performance significantly.</p>
+				</li>
+			</ul>
+
+			<h3>Disadvantages of Data URLs</h3>
+
+			<p>The use of Data URLs has several disadvantages which should be kept in mind:</p>
+
+			<ul>
+				<li>
+					<strong>Repeated occurences</strong>
+					<p>Data URLs must repeat the string of data each time they are used within a document, so if the same resource 
+						is used multiple times, there will be increased bandwidth usage.</p>
+				</li>
+				<li>
+					<strong>Caching</strong>
+					<p>Data URLs cannot be cached separately from their containing documents.  They must therefore be redownloaded 
+						every time the containing document is redownloaded. This means, for example, that if a browser reloads an 
+						HTML document containing Data URLs, it must redownload all the data of embedded resources.</p>
+				</li>
+				<li>
+					<strong>Re-encoding for changes</strong>
+					<p>Content must be re-encoded and re-embedded every time a change is made.  The hassle this entails can be 
+						minimized by using some of the <a href="/software">free software available</a> on this website.  
+						However, you won't want to start using Data URLs until the development process for your website is complete.</p>
+				</li>
+				<li>
+					<strong>No support in old versions of Internet Explorer</strong>
+					<p>Internet Explorer versions prior to version 8 do not support Data URLs at all.  There are 
+						several work-arounds for this, whereby you can  gain the benefits of Data URLs for other browsers while 
+						serving old and shitty browsers traditional images.</p>
+				</li>
+
+				<li>
+					<strong>Base64 encoding increases data size</strong>
+					<p>Base64-encoded Data URLs are 33% larger in size than their binary counterparts.  However, if you use 
+						gzip content encoding on your webserver, this is reduced to between 5-10%.</p>
+				</li>
+				<li>
+					<strong>Size limitations</strong>
+					<p>According to the Data URL specification, browsers need only support Data URLs up to 1024 bytes long.  
+						Most browsers, however, will accept much larger ones.  Opera limits Data URLs to about 4100 characters, 
+						Firefox up to 100 KB, Internet Explorer about 32 KB, and WebKit (Safari) doesn't seem to have any limit at all.  
+						Typically, however, the benefits of using Data URLs disappear at with larger images, so they are best used 
+						only for small (~1K) images.</p>
+				</li>
+			</ul>
+
+			<h3 id="browser">Browser support</h3>
+
+			<p>Data URIs are currently supported by the following web browsers:</p>
+
+			<ul>
+				<li>Firefox and all browsers that use the Gecko rendering engine</li>
+				<li>Safari and other WebKit-based browsers</li>
+				<li>Opera</li>
+				<li>Konqueror</li>
+				<li>Google Chrome</li>
+				<li>Internet Explorer 8+ (with certain limitations)</li>
+			</ul>
+			
+			<br>
+			<br>
+			<br>
+		</div>
 	</div>
 	
 	<!-- DATA URL MAKER -->
-	<div id="dataurlmaker" class="page">
+	<div id="body_dataurlmaker" class="page">
 		
 		<div id="fileselectform">
+			<form id="upload-form" target="myiFrame" action="/cgi-bin/dataurl.pl" method="POST" enctype='multipart/form-data' style="display: inline;">
 			<p>Select or drag a file to get the Data URL: 
-				<input type='file' id='fileinput'>
+					<input type='file' name="file" id='fileinput' style="display: inline;">
+					<input type='hidden' name='action' value='encode' style="display: inline;">
+				</form>	
 			</p>
+			<iframe name="myiFrame" id="postframe"></iframe>
 		</div>
 		
-		<div id="droparea">
-			<br>
-			<br>
-			Drag file here
+		<div id="droparea" onClicK="">
 		</div>
 		
 		<div id="dataurldisplay">
@@ -51,7 +218,6 @@
 				<p id="dataurlfilename">Data URL</p>
 				<textarea id="dataurltextarea"></textarea>
 				<p id="dataurlfilesize"></p>
-				<input type="button" id="copytoclipboard" value="Copy to Clipboard">
 			</div>
 			
 			<div id="dataurlimgview">
@@ -66,14 +232,14 @@
 	</div>
 	
 	<!-- CSS OPTIMIZER -->
-	<div id="cssoptimizer" class="page">
+	<div id="body_cssoptimizer" class="page">
 		<div id="fileselectform">
 			<p>Specify remote CSS URL 
-				<input type='text' id='cssurl' value="http://">
+				<input type='text' id='cssurl' name='css_file_url' value="http://">
 				<input type="button" value="Optimize" onClick="OptimizeCSS();">
 			</p>
-			<p style="font-size: 12px;">
-				Encoded all images smaller than 
+			<p class='small'>
+				Base64-encode all images smaller than 
 				<select id="css_sizelimit">
 					<option value="1">1 KB</option>
 					<option value="2">2 KB</option>
@@ -95,14 +261,16 @@
 					<option value="100">100 KB</option>
 					<option value="10000000000">Infinity</option>
 				</select>	
-				|
-				<input type="checkbox" id="compress_css" name="compress">Compress CSS
-				<!--|
-				<input type="checkbox" name="optimize_pngs">Optimize PNGs-->
+				| <input type="checkbox" id="compress_css" name="compress">Compress CSS
+				<!--| <input type="checkbox" name="optimize_pngs">Optimize PNGs-->
 			</p>
 		</div>
 		<hr class="separator">
-		<div style="text-align: center;"><img src="ajax-loader.gif" id="css_spinner" style="display:none;"></div>
+		
+		<div id="ajaxloader_wrapper">
+			<img src="ajax-loader.gif" id="css_spinner" style="display:none;">
+		</div>
+		
 		<div id="css_stats_wrapper">
 			<div id="css_stats">
 				<p>Before</p>
@@ -125,8 +293,52 @@
 		</div>
 	</div>
 	
-	<div id="downloads" class="page">
-	Downloads
+	<div id="body_downloads" class="page">
+		<h3>Downloads</h3>
+		
+		<p>All software here is shared under the conditions of the
+			 <a href="http://www.gnu.org/copyleft/gpl.html">GNU General Public License</a>.</p>
+	
+		<ul>
+			<li>
+				<strong><a href="/downloads/dataurlmaker.pl.gz">dataurlmaker.pl</a></strong>
+				<p>Perl command line tool for creating Data URLs</p>
+			</li>
+			<li>
+				<strong><a href="/downloads/DataURLMaker.app.zip">DataURLMaker.app</a></strong>
+				<p>Mac OS X application for creating Data URLs</p>
+			</li>
+			<li>
+				<strong><a href="/downloads/DataURLMaker.service.zip">DataURLMaker.service</a></strong>
+				<p>Mac OS X service for creating Data URLs</p>
+			</li>
+			<li>
+				<strong><a href="/downloads/CSSDataURL.pm.gz">CSS Data URL Apache 2 module</a></strong>
+				<p>Automatically serve cached CSS w. embedded data</p>
+			</li>
+			<li>
+				<strong><a href="/downloads/DataURLToolkit.tgz">Complete Data URL Toolkit</a></strong>
+				<p>All the software and entire source code repository for the complete Data URL Toolkit, 
+					including this website and the back-end web application, which is implemented using Perl.</p>
+			</li>
+		</ul>
+		
+		<h3>Useful links</h3>
+		
+		<ul>
+			<li>
+				<strong><a href="https://github.com/sveinbjornt/Data-URL-Toolkit">Data URL Toolkit on GitHub</a></strong>
+				<p>This project's open source code repository on GitHub.  Fork and have fun!</p>
+			</li>
+			<li>
+				<strong><a href="http://sveinbjorn.org/dataurls_css">Using Data URLs Effectively with Cascading Style Sheets</a></strong>
+				<p>An article about using Data URLs effectively with CSS.</p>
+			</li>
+		</ul>
+		
+		<br>
+		<br>
+		<br>
 	</div>
 	
 	
@@ -138,7 +350,7 @@
 
 
 <footer>
-	&copy; 2011 Sveinbjorn Thordarson.  Available under the Creative Commons License.
+	&copy; 2011 Sveinbjorn Thordarson.  Available under the GNU General Public License.
 </footer>
 
 </body>

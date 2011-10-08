@@ -6,6 +6,7 @@ body
 	padding: 0;
 	margin: 0;
 	text-align: center;
+	font-size: 0.9em;
 }
 
 h1
@@ -24,6 +25,12 @@ h2
 	color: #DDD;
 	margin-top: 0px;
 	font-size: 1.1em;
+}
+
+h3
+{
+    margin-top: 33px;
+    font-size: 1.1em;
 }
 
 header
@@ -74,6 +81,7 @@ nav ul
 	float: left;
 	width: 180px;
 	background-color: #a00;
+	cursor: pointer;
 }
 
 .litem a
@@ -81,6 +89,16 @@ nav ul
 	color: #efeff1;
 	font-weight: bold;
 	text-decoration: none;
+}
+
+li
+{
+    margin-top: 10px;
+}
+
+a
+{
+    color: #a00;
 }
 
 article
@@ -105,13 +123,20 @@ article
 	background-color: white;
 	font-weight: bold;
 	color: black;
+	background-clip: padding-box;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding;
 }
+#selected a 
+{
+    color: #b00; 
+    text-shadow: none;
+}
+
 
 footer
 {
-/*	-webkit-box-shadow: -7px 7px 10px rgba(0, 0, 0, 0.5);
-	-moz-box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.5);
-*/	font-size: 11px;
+	font-size: 11px;
 	position: fixed;
 	width: 100%;
 	bottom: 0px;
@@ -129,9 +154,11 @@ footer
 	display: none;
 }
 
-.separator
+hr
 {
-    height: 2px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 0px;
     border: 1px solid #a00;
 }
 
@@ -147,8 +174,6 @@ footer
 #dataurldisplay
 {
 	border: 3px dotted gray;
-/*	height: 400px;
-*/	
 	width: 100%;
 	height: 380px;
 	display: none;
@@ -232,6 +257,19 @@ pre
      
 }
 
+#postframe
+{
+    display: none; 
+    width: 0px; 
+    height: 0px;
+    visibility: hidden;
+}
+
+.small
+{
+    font-size: 12px;
+}
+
 #dataurlimgview
 {
 	width: 310px;
@@ -263,4 +301,9 @@ pre
 #css_output_container
 {
     display: none;
+}
+
+blockquote
+{
+    white-space: pre-wrap;
 }
