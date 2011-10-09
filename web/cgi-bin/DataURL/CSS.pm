@@ -13,11 +13,11 @@ use HTTP::Request;
 use LWP::UserAgent;
 use DataURL::Util;
 
-our @EXPORT = qw(Optimize);
+our @EXPORT = qw(optimize compress);
 our $VERSION = "1.0";
 our $default_limit = 4096;
 our $default_ua = 'DataURL.Net-CSSOptimizerBot/$VERSION (dataurl.net) ' . POSIX::uname();
-our $timeout = 10;
+our $timeout = 8;
 our $max_css_size = 200 * 1024;
 our $max_ext_obj_size = 200 * 1024;
 
@@ -245,9 +245,11 @@ sub optimize
     $cssinfo{post}{css_gzip_size} = length(Compress::Zlib::compress($css));
     $cssinfo{post}{total_gzip_size} = $cssinfo{post}{css_gzip_size} + $cssinfo{post}{ext_size};
     
-    if ($compress) { $css = compress_css($css); }
+    # Compress CSS, if specified
+    if ($compress) { $css = compress($css); }
     $cssinfo{css_output} = $css;
     
+    # Add the dict of remote urls, for resource status on client side
     $cssinfo{ext_objects} = \%fetch_urls;
     
     return \%cssinfo;
@@ -260,7 +262,7 @@ sub _error
     return \%reply;
 }
 
-sub compress_css
+sub compress
 {
     my ($css) = @_;
     $css =~ s/\n+//gi;

@@ -126,5 +126,4 @@ sub urljoin
     return $result;
 }
 
-
 1;
