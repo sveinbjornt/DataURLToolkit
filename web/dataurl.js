@@ -151,7 +151,6 @@ function ShowLoader (bool)
     {
         $("#css_stats_wrapper").css('display', 'block');
     	$('#ajaxloader_wrapper').css('display', 'none');
-        
     }
 }
 
@@ -180,7 +179,8 @@ function OptimizeCSS ()
             return;
 		}
 		
-		var listhtml = '<tr><td width="25"><span>Req.</span></td><td width="40%"><span>Remote URL</span></td><td><span>Mime-Type</span></td><td><span>Size</span></td><td><span>Status</span></td>';
+		// Generate ext. resources list
+		var listhtml = '<tr><td width="25"><span>Req.</span></td><td width="40%"><span>Remote URL</span></td><td><span>Mime-Type</span></td><td><span>Size</span></td><td width="35%"><span>Status</span></td>';
 		for (var key in data['ext_objects']) 
 		{
             var dict = data['ext_objects'][key];
@@ -189,8 +189,8 @@ function OptimizeCSS ()
         }
         listhtml = '<table width="100%">' + listhtml + '</table><br>';
 		
-		$("#status_message").html(listhtml);
-		$("#status_message").css('display', 'block');
+		$("#css_resources").html(listhtml);
+		$("#css_resources").css('display', 'block');
 		
 		$("#pre_output").html('');
 		$("#post_output").html('');

@@ -27,7 +27,7 @@
 <article>
 	<div id="body_about" class="page">
 		
-		<div style="float: right; width: 200px; background-color: #eee; font-size: 0.9em; padding: 15px; margin-left: 25px;">
+		<div class='indexbox'>
 			<ul>
 				<li><a href="#what">What are Data URLs?</a></li>
 				<li><a href="#history">History</a></li>
@@ -50,7 +50,7 @@
 			</ul>
 		</p>
 	
-		<p>Various modules, code examples and GUI/command line tools for <strong>UNIX and Mac OS X systems</strong> are available on the <a href="#downloads">Downloads page</a>.</p>
+		<p>Various modules, code examples and GUI/command line tools for <strong>UNIX and Mac OS X systems</strong> are available in <a href="#downloads" onClick="ShowPage('downloads')">Downloads</a>.</p>
 	 
 		<br>
 	
@@ -245,7 +245,7 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 		
 		<div id="fileselectform">
 			<p>Specify remote CSS URL 
-				<input type='text' id='cssurl' name='css_file_url' value="http://sveinbjorn.org/files/sveinbjorn.css">
+				<input type='text' id='cssurl' name='css_file_url' value="">
 				<input type="button" value="Optimize" onClick="OptimizeCSS();">
 			</p>
 			<p class='small'>
@@ -278,17 +278,18 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 		
 		<hr class="separator">
 		
+		<div id="ajaxloader_wrapper" style="display: none;">
+			<br>
+			<br>
+			<img src="ajax_loader_large.gif" style="margin: auto;">
+		</div>
+		<div id="status_message" style="display: none;"></div>
+		
 		<div id="css_output_container">
 			<h4 class="lowmargin">Resources</h4>
 			
-			<div id="status_message" style="display: none;"></div>
-		
-			<div id="ajaxloader_wrapper" style="display: none;">
-				<br>
-				<br>
-				<img src="ajax_loader_large.gif" style="margin: auto;">
-			</div>
-		
+			<div id="css_resources" style="display: none;"></div>
+				
 			<div id="css_stats_wrapper">
 				<div id="css_stats">
 					<h4 class="lowmargin">Before</h4>
@@ -300,13 +301,12 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 				</div>
 				<div style="clear: both;"></div>
 				<br>
-				<div id="css_output_container">
+				<div id="css_container">
 					<div id="css_downloadlink"></div>
 				
 					<p>Optimized CSS</p>
 				
-					<div id="css_output">
-					</div>
+					<div id="css_output"></div>
 				</div>
 			</div>
 		</div>

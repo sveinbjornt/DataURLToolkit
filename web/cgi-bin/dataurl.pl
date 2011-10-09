@@ -12,13 +12,13 @@ use DataURL::CSS qw(optimize);
 use DataURL::Util qw(is_image_data);
 use DataURL::Encode qw(dataurl_from_dataref);
 
+#if($ENV{REQUEST_METHOD} ne 'POST') { error("Illegal request.", 403); }
+
 local our $cgi = new CGI;
 local our $action = $cgi->param('action');
 
 if ($action eq 'encode')
-{
-    if($ENV{REQUEST_METHOD} ne 'POST') { error("Illegal request.", 403); }
-    
+{    
     # Read file data
     my $filehandle = $cgi->upload('file');
     my $data = undef;
@@ -68,7 +68,6 @@ sub reply
     print "Status: $status\n";
     print STDOUT "Content-Type: application/json\n\n";
     print STDOUT $json;
-    warn($json);
     exit(0);
 }
 

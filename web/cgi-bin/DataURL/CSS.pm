@@ -19,7 +19,7 @@ our $default_limit = 4096;
 our $default_ua = 'DataURL.Net-CSSOptimizerBot/$VERSION (dataurl.net) ' . POSIX::uname();
 our $timeout = 10;
 our $max_css_size = 200 * 1024;
-our $max_ext_obj_size = 300 * 1024;
+our $max_ext_obj_size = 200 * 1024;
 
 sub optimize
 {
@@ -42,6 +42,7 @@ sub optimize
     my $request = HTTP::Request->new(HEAD => $css_url);
     my $response = $ua->request($request);
     
+    # Make sure response is OK
     if (!$response->is_success) 
     {
         return _error("Failed to fetch CSS document. Status:  " . $response->status_line);
@@ -59,10 +60,11 @@ sub optimize
         return _error("CSS size ($css_size) exceeds maximum ($max_css_size)");
     }
     
-    # OK, the file seems fine.  Let's fetch it properly.
+    # OK, the file seems fine.  Let's fetch it properly using GET.
     $request = HTTP::Request->new(GET => $css_url);
     $response = $ua->request($request);
     
+    # Get content
     my $css = $response->decoded_content();
     
     # Find and clean all strings contained within url()
@@ -80,15 +82,14 @@ sub optimize
     foreach my $url (@matches)
     {
         if ($url =~ /^data\:/) { $cssinfo{pre}{data_urls} += 1; next; }
-        my %urlhash = (         head => 1,
-                                get => 0, 
+        my %urlhash = (         get => 0, 
                                 converted => 0,
                                 image => 0,
-                                size => 0,
+                                size => '?',
                                 status_msg => '',
-                                req => 'Skipped',
-                                full_url => undef,
-                                mime_type => undef,
+                                req => '?',
+                                full_url => '?',
+                                mime_type => '?',
                                 full_url => DataURL::Util::urljoin($css_url, $url),
                                 status => 'ok'    ); # can be ok, warn, err
         $fetch_urls{$url} = \%urlhash;
@@ -103,23 +104,21 @@ sub optimize
     $cssinfo{dataurl_converted} = 0;
     $cssinfo{pre}{total_gzip_size} = 0;
     
+    # Maps URLs in CSS to Data URLs
     my %replace_map;
-    my %ext_obj_sizes;
     
     # Do HEAD request on each external object
     foreach my $url (keys(%fetch_urls))
-    {
-        if (!$fetch_urls{$url}{head}) { next; }
-        
+    {        
         # Send HEAD request
         $fetch_urls{$url}{req} = 'HEAD';
         $request = HTTP::Request->new(HEAD => $fetch_urls{$url}{full_url});
         $response = $ua->request($request);
         
-        # If it fails, we mark
+        # If it fails, we mark error, else save info from HEAD req
         if ($response->is_success)
         {
-            $fetch_urls{$url}{status_msg} = "OK HEAD";
+            $fetch_urls{$url}{status_msg} = $response->status_line . " HEAD";
         }
         else
         { 
@@ -129,7 +128,20 @@ sub optimize
         }
         my $remote_mimetype = $response->header('Content-Type');
         my $remote_size = $response->header('Content-Length');
-                
+        
+        # We save the size and mime information about remote URL
+        if ($remote_mimetype)   { $fetch_urls{$url}{mime_type} = $remote_mimetype; }
+        if ($remote_size)       { $fetch_urls{$url}{size} = $remote_size; }
+        
+        # Make sure it doesn't exceed hard limit in size
+        if ($remote_size > $max_ext_obj_size)
+        {
+            $fetch_urls{$url}{status_msg} = "OK Skipping, too large (hard limit)";
+            $fetch_urls{$url}{status} = 'warn';
+            $fetch_urls{$url}{get} = 0;
+            next; 
+        }
+        
         # If no content-length, we fetch it to see how big it is
         if (!defined($remote_size)) 
         { 
@@ -139,16 +151,24 @@ sub optimize
         
         # If it's an image, we mark it for fetching if below size limit
         if ((DataURL::Util::is_image_mime_type($remote_mimetype) or 
-            DataURL::Util::is_image_mime_type(DataURL::Util::image_mime_type_from_filename($url)))
-            and $remote_size <= $limit) 
+            DataURL::Util::is_image_mime_type(DataURL::Util::image_mime_type_from_filename($url)))) 
         { 
-            $fetch_urls{$url}{get} = 1;
+            if ($remote_size <= $limit)
+            {
+                $fetch_urls{$url}{get} = 1;
+            }
+            else
+            {
+                $fetch_urls{$url}{status_msg} = 'OK Skipping, too large';
+                $fetch_urls{$url}{status} = 'warn';
+            }
             $fetch_urls{$url}{image} = 1;
         }
-        
-        # We save the size and mime information about remote URL
-        $fetch_urls{$url}{mime_type} = $remote_mimetype;
-        $fetch_urls{$url}{size} = $remote_size;
+        else
+        {
+            $fetch_urls{$url}{status_msg} = 'OK Skipping, not an image';
+            $fetch_urls{$url}{status} = 'warn';
+        }
     }
     
     # Iterate again, GET request for those marked for fetching
@@ -163,7 +183,7 @@ sub optimize
         $response = $ua->request($request);
         if ($response->is_success)
         {
-            $fetch_urls{$url}{status_msg} = "OK GET";
+            $fetch_urls{$url}{status_msg} = $response->status_line . " GET";
         }
         else
         { 
@@ -181,8 +201,7 @@ sub optimize
             my $datasize = length($data);
             if ($datasize >= $limit)
             {
-                $fetch_urls{$url}{converted} = 1;
-                $fetch_urls{$url}{status_msg} = "Skipping, image size gt $limit bytes";
+                $fetch_urls{$url}{status_msg} = "Skipping, image size gt $limit";
                 $fetch_urls{$url}{status} = 'warn';
             }
             else

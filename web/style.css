@@ -2,11 +2,12 @@
 body
 {
 	font-family: "Monaco", "Andale Mono", "Courier", "Courier New";
-	background-image: url(bg.jpg);
+	background-image: url("bg.jpg");
+	background-color: #ddd;
 	padding: 0;
 	margin: 0;
 	text-align: center;
-	font-size: 0.9em;
+	font-size: 1.0em;
 }
 
 h1
@@ -24,6 +25,7 @@ h2
 	
 	color: #DDD;
 	margin-top: 0px;
+	margin-bottom: 0px;
 	font-size: 1.1em;
 }
 
@@ -33,32 +35,29 @@ h3
     font-size: 1.1em;
 }
 
-
-
 #ajaxloader_wrapper
 {
     text-align: center;
 }
 
-#status_message
+#css_resources
 {
     white-space: pre-wrap;
     font-size: 12px;
 }
-#status_message td
+#css_resources td
 {
     font-size: 10px;
     padding: 2px;
 }
 
-#status_message span
+#css_resources span, #status_message span
 {
     font-weight: bold;
     font-size: 11px;
 }
 
-
-#status_message strong
+#css_resources strong, #status_message strong
 {
     background-color: green;
     color: white;
@@ -66,13 +65,23 @@ h3
     font-style: normal;
 }
 
-#status_message em
+#css_resources u, #status_message u
+{
+    background-color: rgb(200,121,0);
+    color: white;
+    padding: 3px;
+    font-style: normal;
+    text-decoration: none;
+}
+
+#css_resources em, #status_message em
 {
     background-color: #a00;
     color: white;
     padding: 3px;
     font-style: normal;
 }
+
 
 
 header
@@ -85,6 +94,17 @@ header
 	-webkit-box-shadow: 0px 7px 10px rgba(0, 0, 0, 0.5);
 	-moz-box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.5);
 	
+}
+
+.indexbox
+{
+    border: 1px solid #ccc;
+    float: right; 
+    width: 200px; 
+    background-color: #eee; 
+    font-size: 0.9em; 
+    padding: 15px; 
+    margin-left: 25px;
 }
 
 nav
@@ -150,14 +170,15 @@ article
 	margin: 0 auto;
 	width: 678px;
 	padding: 30px;
+	font-size: 0.8em;
 	padding-bottom: 30px;
 	background-color: white;
 	border-left: 3px solid #a00;
 	border-right: 3px solid #a00;
 	border-bottom: 3px solid #a00;
 	-webkit-box-shadow: 0px 7px 20px rgba(0, 0, 0, 0.5);
-	-moz-box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.5);
-	
+	-moz-box-shadow: 0px 7px 20px rgba(0, 0, 0, 0.5);
+	box-shadow: 0px 7px 20px rgba(0, 0, 0, 0.5);
 }
 
 #selected
