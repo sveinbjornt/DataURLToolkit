@@ -6,19 +6,18 @@ then
     exit
 fi
 
-# Remove old tarballs
+echo "-> Removing old tarballs"
 rm /tmp/DataURLToolkit.tgz &> /dev/null
 rm web/html/downloads/dataurlmaker.tgz &> /dev/null
 rm web/html/downloads/Apache-DataURL.tgz &> /dev/null
+rm web/html/downloads/downloads/DataURL-Modules.tgz &> /dev/null
 
-# Create repository tarball
+echo "-> Creating DataURLToolkit.tgz"
 tar cvfz /tmp/DataURLToolkit.tgz .
-
-# Move repo tarball to download path
 mv /tmp/DataURLToolkit.tgz web/html/downloads/DataURLToolkit.tgz
 
-# Perl command line tool
+echo "-> Creating dataurlmaker.tgz"
 tar cvfz web/html/downloads/dataurlmaker.tgz command_line_tools/dataurlmaker.pl
 
-# Apache module
+echo "-> Creating Apache-DataURL.tgz"
 tar cvfz web/html/downloads/Apache-DataURL.tgz apache/Apache-DataURL.pm
