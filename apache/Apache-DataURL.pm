@@ -12,7 +12,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-package Apache2::Hello;
+package Apache2::DataURL;
 
 use strict;
 use warnings;
@@ -34,16 +34,12 @@ sub handler
 
 	my $cssfile = $r->filename();
 	
-	warn("Mimetype for css: " . $r->content_type());
-	
 	if (defined($cache{$cssfile}))
 	{
-		warn("Reading from cache");
 		$text = $cache{$cssfile};
 	}
 	else
 	{
-		warn("DATAURLIFYING");
 		open(FILE, $cssfile) or die("Could not read css file $cssfile");
 		my @lines = <FILE>;
 		close(FILE);
@@ -68,17 +64,13 @@ sub dataurlifyCSS
 	{
 		my $url = $1;		
 		if ($url =~ m/^data\:/) { next; } # Already a Data URL
-		
-		# warn($url);
-		
+				
 		my $sr = $r->lookup_uri("\"$url");
 		my $rc = $sr->run();
 		my $pi = $sr->path_info();
 		my $mimetype = $sr->content_type();
-		warn("Mime: $mimetype");
 		my $path = $ENV{DOCUMENT_ROOT} . $pi;
 		
-		warn($path);
 		my $dataurl = dataurlForFilePath($path, $mimetype);
 		
 		if (defined($dataurl))
