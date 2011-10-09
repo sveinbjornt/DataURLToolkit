@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8">
@@ -16,8 +17,8 @@
 
 <nav>
 	<ul>
-		<li class="litem" name="about" onClick="ShowPage('about');"><a href="#about">About</a></li>
-		<li class="litem" name="dataurlmaker" id="selected" onClick="ShowPage('dataurlmaker');"><a href="#dataurlmaker">Data URL Maker</a></li>
+		<li class="litem" name="about" id="selected" onClick="ShowPage('about');"><a href="#about">About</a></li>
+		<li class="litem" name="dataurlmaker" onClick="ShowPage('dataurlmaker');"><a href="#dataurlmaker">Data URL Maker</a></li>
 		<li class="litem" name="cssoptimizer"onClick="ShowPage('cssoptimizer');"><a href="#cssoptimizer">CSS Optimizer</a></li>
 		<li class="litem" name="downloads" onClick="ShowPage('downloads');"><a href="#downloads">Downloads</a></li>
 	</ul>
@@ -34,22 +35,23 @@
 				<li><a href="#advantages">Advantages</a></li>
 				<li><a href="#disadvantages">Disadvantages</a></li>
 				<li><a href="#browser">Browser support</a></li>
+				<li><a href="#maintainers">Maintainers</a></li>
 			</ul>
 		</div>
 		
 		<p><strong>DATAURL.NET</strong> is home to some open source tools for creating and working with Data URLs 
-			(<a href="http://tools.ietf.org/html/rfc2397">RFC 2397</a>).  
-		</p>
+			(<a href="http://tools.ietf.org/html/rfc2397">RFC 2397</a>).</p>
 	
-		<p>Two of these tools are web-based and available here.  
+		<p>Two of these tools are <strong>web-based</strong> and available here: 
 		
 			<ul>
-				<li><a href="#dataurlmaker" onClick="ShowPage('dataurlmaker');">Data URL Maker</a> converts files to Data URLs.</li>
-				<li><a href="#cssoptimizer" onClick="ShowPage('cssoptimizer');">CSS Optimizer</a> optimizes CSS files by embedding external images as Data URLs.</li>
+				<li><a href="#dataurlmaker" onClick="ShowPage('dataurlmaker');"><strong>Data URL Maker</strong></a> converts files to Data URLs.</li>
+				<li><a href="#cssoptimizer" onClick="ShowPage('cssoptimizer');"><strong>CSS Optimizer</strong></a> optimizes CSS files by embedding external images as Data URLs.</li>
 			</ul>
+		</p>
 	
-		<p>Various modules, code examples and GUI/command line tools for UNIX and Mac OS X are available on the <a href="#downloads">Downloads page</a>.</p>
-	
+		<p>Various modules, code examples and GUI/command line tools for <strong>UNIX and Mac OS X systems</strong> are available on the <a href="#downloads">Downloads page</a>.</p>
+	 
 		<br>
 	
 		<hr class="separator">
@@ -189,6 +191,11 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 				<li>Internet Explorer 8+ (with certain limitations)</li>
 			</ul>
 			
+			<h3 id="maintainers">Maintainers</h3>
+			
+			<p>The <a href="https://github.com/sveinbjornt/Data-URL-Toolkit">Data URL Toolkit project</a>, which this website is part of, was developed and is currently 
+				maintained by <a onClick="location.href='mailto:'+'sveinbjornt'+'@' + 'gmail' +'.'+'com';">Sveinbjorn Thordarson &lt;sveinbjornt __at__ gmail&gt;</a>.
+			
 			<br>
 			<br>
 			<br>
@@ -197,6 +204,7 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 	
 	<!-- DATA URL MAKER -->
 	<div id="body_dataurlmaker" class="page">
+		<h3 class="lowmargin">Data URL Maker</h3>
 		
 		<div id="fileselectform">
 			<form id="upload-form" target="myiFrame" action="/cgi-bin/dataurl.pl" method="POST" enctype='multipart/form-data' style="display: inline;">
@@ -215,13 +223,13 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 			
 			<div id="dataurltextwrap">
 				
-				<p id="dataurlfilename">Data URL</p>
+				<h3 id="dataurlfilename" class="lowmargin">Data URL</h3>
 				<textarea id="dataurltextarea"></textarea>
 				<p id="dataurlfilesize"></p>
 			</div>
 			
 			<div id="dataurlimgview">
-				<p>Image preview</p>
+				<h3 class="lowmargin">Image preview</h3>
 				<div id="dataurlimg"></div>
 			</div>
 			
@@ -233,9 +241,11 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 	
 	<!-- CSS OPTIMIZER -->
 	<div id="body_cssoptimizer" class="page">
+		<h3 class="lowmargin">CSS Optimizer</h3>
+		
 		<div id="fileselectform">
 			<p>Specify remote CSS URL 
-				<input type='text' id='cssurl' name='css_file_url' value="http://">
+				<input type='text' id='cssurl' name='css_file_url' value="http://sveinbjorn.org/files/sveinbjorn.css">
 				<input type="button" value="Optimize" onClick="OptimizeCSS();">
 			</p>
 			<p class='small'>
@@ -265,36 +275,45 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 				<!--| <input type="checkbox" name="optimize_pngs">Optimize PNGs-->
 			</p>
 		</div>
+		
 		<hr class="separator">
 		
-		<div id="ajaxloader_wrapper">
-			<img src="ajax-loader.gif" id="css_spinner" style="display:none;">
-		</div>
+		<div id="css_output_container">
+			<h4 class="lowmargin">Resources</h4>
+			
+			<div id="status_message" style="display: none;"></div>
 		
-		<div id="css_stats_wrapper">
-			<div id="css_stats">
-				<p>Before</p>
-				<div id="pre_output"></div>
+			<div id="ajaxloader_wrapper" style="display: none;">
+				<br>
+				<br>
+				<img src="ajax_loader_large.gif" style="margin: auto;">
 			</div>
-			<div id="css_stats">
-				<p>After</p>
-				<div id="post_output"></div>
-			</div>
-			<div style="clear: both;"></div>
-			<br>
-			<div id="css_output_container">
-				<div id="css_downloadlink"></div>
+		
+			<div id="css_stats_wrapper">
+				<div id="css_stats">
+					<h4 class="lowmargin">Before</h4>
+					<div id="pre_output"></div>
+				</div>
+				<div id="css_stats">
+					<h4 class="lowmargin">After</h4>
+					<div id="post_output"></div>
+				</div>
+				<div style="clear: both;"></div>
+				<br>
+				<div id="css_output_container">
+					<div id="css_downloadlink"></div>
 				
-				<p>Optimized CSS</p>
+					<p>Optimized CSS</p>
 				
-				<div id="css_output">
+					<div id="css_output">
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	
 	<div id="body_downloads" class="page">
-		<h3>Downloads</h3>
+		<h3 class="lowmargin">Downloads</h3>
 		
 		<p>All software here is shared under the conditions of the
 			 <a href="http://www.gnu.org/copyleft/gpl.html">GNU General Public License</a>.</p>
@@ -319,7 +338,7 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 			<li>
 				<strong><a href="/downloads/DataURLToolkit.tgz">Complete Data URL Toolkit</a></strong>
 				<p>All the software and entire source code repository for the complete Data URL Toolkit, 
-					including this website and the back-end web application, which is implemented using Perl.</p>
+					which includes this website and the back-end web application, implemented in <a href="http://perl.org">Perl</a>.</p>
 			</li>
 		</ul>
 		
@@ -348,9 +367,8 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
      $(document).ready(Init);
 </script>
 
-
 <footer>
-	&copy; 2011 Sveinbjorn Thordarson.  Available under the GNU General Public License.
+	&copy; 2011 Sveinbjorn Thordarson.  Available under the GNU <a href="http://www.gnu.org/copyleft/gpl.html">General Public License</a>. Powered by <a href="http://perl.org">Perl</a>.
 </footer>
 
 </body>

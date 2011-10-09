@@ -33,6 +33,48 @@ h3
     font-size: 1.1em;
 }
 
+
+
+#ajaxloader_wrapper
+{
+    text-align: center;
+}
+
+#status_message
+{
+    white-space: pre-wrap;
+    font-size: 12px;
+}
+#status_message td
+{
+    font-size: 10px;
+    padding: 2px;
+}
+
+#status_message span
+{
+    font-weight: bold;
+    font-size: 11px;
+}
+
+
+#status_message strong
+{
+    background-color: green;
+    color: white;
+    padding: 3px;
+    font-style: normal;
+}
+
+#status_message em
+{
+    background-color: #a00;
+    color: white;
+    padding: 3px;
+    font-style: normal;
+}
+
+
 header
 {
 	padding-top: 12px;
@@ -133,6 +175,11 @@ article
     text-shadow: none;
 }
 
+.lowmargin
+{
+    margin-top: 10px;
+    padding: 0;
+}
 
 footer
 {
@@ -147,6 +194,11 @@ footer
 	-webkit-box-shadow: 0px -1px 10px rgba(0, 0, 0, 0.5);
 	-moz-box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.5);
 	text-shadow: 1px 1px 1px #000;
+}
+
+footer a
+{
+    color: #ddd;
 }
 
 .page
@@ -183,8 +235,8 @@ hr
 #css_stats_wrapper
 {
     width: 100%;
-/*    display: none;
-*/    padding-bottom: 10px;
+    display: none;
+    padding-bottom: 10px;
 }
 
 #css_stats_wrapper p
@@ -213,7 +265,7 @@ hr
 
 #css_stats em
 {
-    background-color: red;
+    background-color: #a00;
     color: white;
     padding: 3px;
     font-style: normal;

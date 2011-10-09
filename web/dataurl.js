@@ -1,50 +1,5 @@
 
-function ShowPage (pname)
-{
-    // show relevant block for the page
-	$(".page").css("display", "none");
-	$("#body_" + pname).css("display","block");
-	
-	// Remove selected style from all, add to selected item
-	$(".litem").attr("id","");
-	$('li[name=' + pname + ']').attr("id", 'selected');
-}
-
-function HandleFileSelect(evt) 
-{
-    if (!HasFileAPIs()) 
-    {
-        var frame = document.getElementById('postframe');
-        frame.onload = DataURLLoaded;
-        $("#upload-form").submit();
-        
-    }
-    else
-    {
-        var files = evt.target.files; // FileList object
-    	var file = files[0];
-    	ReadDataFile(file);
-    }
-}
-
-function DataURLLoaded ()
-{
-    if ($("#postframe").contents().text() == '') { return; }
-    
-    var dict = eval('(' + $("#postframe").contents().text() + ')');
-    
-    $("#dataurltextarea").html(dict['dataurl']);
-	$("#dataurlfilename").html(dict['filename']);
-	$("#droparea").css('display', 'none');
-	$("#dataurlfilesize").html('Data URL Size: ' + dict['size'] + ' bytes<br>Gzipped URL size: ' + dict['gzipsize'] + ' bytes<br>Original size: ' + dict['origsize'] + ' bytes');
-	if (dict['image']) {
-		$("#dataurlimg").html('<img src="' + dict['dataurl'] + '">')
-	} else {
-		$("#dataurlimg").html('Not an image');
-	}
-	$("#dataurldisplay").css('display', 'block');
-}
-
+// prep everything once page is loaded
 function Init ()
 {
     document.getElementById('fileinput').addEventListener('change', HandleFileSelect, false);
@@ -65,10 +20,10 @@ function Init ()
     	uploadPlace.addEventListener("drop", handleDrop, false);
     	
     	$("#droparea").html('<br><br>Drag file here');
-    	$("#fileselectform").css('display', 'block');
 	}
 	else
 	{
+	    $("#droparea").html('<br><br>Select file');
 	}
 	
     if (window.location.hash)
@@ -81,11 +36,73 @@ function Init ()
 	}
 }
 
+// tells us whether browser has File API support
 function HasFileAPIs ()
 {
     return (window.File && window.FileReader && window.FileList && window.Blob);
 }
 
+// tab navigation select function
+function ShowPage (pname)
+{
+    // show relevant block for the page
+	$(".page").css("display", "none");
+	$("#body_" + pname).css("display","block");
+	window.location.hash = '#' + pname;
+	
+	// Remove selected style from all, add to selected item
+	$(".litem").attr("id","");
+	$('li[name=' + pname + ']').attr("id", 'selected');
+}
+
+// file selection handler for data url maker
+function HandleFileSelect(evt) 
+{
+    if (!HasFileAPIs()) 
+    {
+        // without File APIs, we submit form in background into iframe
+        // and read the resulting JSON in the onload handler
+        var frame = document.getElementById('postframe');
+        frame.onload = DataURLLoaded;
+        $("#upload-form").submit();
+        
+    }
+    else
+    {
+        // with the File APIs, we can just get the file object
+        // and start working with it, no server-side processing required
+        var files = evt.target.files; // FileList object
+    	var file = files[0];
+    	ReadDataFile(file);
+    }
+}
+
+// handler function when Data URL Maker form submission has finished
+// in the hidden iframe.  Result should be JSON text containing the 
+// DataURL and file info
+function DataURLLoaded ()
+{
+    if ($("#postframe").contents().text() == '') { return; }
+    
+    // eval the JSON
+    var dict = eval('(' + $("#postframe").contents().text() + ')');
+    
+    // fill the fields
+    $("#dataurltextarea").html(dict['dataurl']);
+	$("#dataurlfilename").html(dict['filename']);
+	$("#droparea").css('display', 'none');
+	$("#dataurlfilesize").html('Data URL Size: ' + dict['size'] + ' bytes<br>Gzipped URL size: ' + dict['gzipsize'] + ' bytes<br>Original size: ' + dict['origsize'] + ' bytes');
+	if (dict['image']) {
+		$("#dataurlimg").html('<img src="' + dict['dataurl'] + '">')
+	} else {
+		$("#dataurlimg").html('Not an image');
+	}
+	$("#dataurldisplay").css('display', 'block');
+}
+
+
+// Read through entire data file from File APIs
+// and fill fields with values
 function ReadDataFile (file)
 {
 	var reader = new FileReader();
@@ -122,18 +139,58 @@ function handleDrop (event)
 	ReadDataFile(file);
 }
 
+function ShowLoader (bool)
+{
+    if (bool)
+    {
+        $("#status_message").css('display', 'none');
+        $("#css_stats_wrapper").css('display', 'none');
+    	$('#ajaxloader_wrapper').css('display', 'block');
+    }
+    else
+    {
+        $("#css_stats_wrapper").css('display', 'block');
+    	$('#ajaxloader_wrapper').css('display', 'none');
+        
+    }
+}
+
+// Call server-side application, and display 
+// its response in a prettified way
 function OptimizeCSS ()
 {
 	var limit = $('#css_sizelimit').val();
 	var compress = $('input:checkbox[name=compress]:checked').val();
 	
-	$('#css_spinner').css('display', 'block');
+	ShowLoader(1);
 	
 	var href = '/cgi-bin/dataurl.pl?action=optimize&compress=' + compress + '&size_limit=' + limit + '&css_file_url=' + $('#cssurl').val()
-	$.get(href, function(data) {
-		if (data == undefined) {
+	$.get(href, function(data) 
+	{
+		if (data == undefined) 
+		{
 			 alert("ERROR:  NO DATA FROM SERVER.");
+			 return;
 		}
+		
+		if (data['error']) {
+		    $("#status_message").html('<em>ERROR: ' + data['error'] + '</em>');
+            $('#ajaxloader_wrapper').css('display', 'none');
+            $("#status_message").css('display', 'block');
+            return;
+		}
+		
+		var listhtml = '<tr><td width="25"><span>Req.</span></td><td width="40%"><span>Remote URL</span></td><td><span>Mime-Type</span></td><td><span>Size</span></td><td><span>Status</span></td>';
+		for (var key in data['ext_objects']) 
+		{
+            var dict = data['ext_objects'][key];
+            var row = '<tr><td>' + dict['req'] + '</td><td><a href="' + dict['full_url'] + '">' + key + '</a></td><td>' + dict['mime_type'] + '</td><td>' + dict['size'] + '</td><td>' + color_for_ext_item(dict['status_msg'], dict) +' </td></tr>';
+            listhtml += row;
+        }
+        listhtml = '<table width="100%">' + listhtml + '</table><br>';
+		
+		$("#status_message").html(listhtml);
+		$("#status_message").css('display', 'block');
 		
 		$("#pre_output").html('');
 		$("#post_output").html('');
@@ -171,16 +228,16 @@ function OptimizeCSS ()
 		$("#pre_output").append('<p>' + arr[0] + ' bytes gzipped</p>');
 		$("#post_output").append('<p>' + arr[1] + ' bytes gzipped ('+ perc_diff(data, 'total_gzip_size') +'%)</p>');
 		
-		
-		
 		$("#css_output").html('<pre>' + data['css_output'] + '</pre>');
 		$("#css_downloadlink").html('<a href="' + data['css_link'] + '">⇓ Download Optimized CSS</a>')
 		$("#css_output_container").css('display', 'block');
-		// ProcessCSS(data);
-		$('#css_spinner').css('display', 'none');
+
+        ShowLoader(0);
 	});	
 }
 
+// calculate percentage difference between two values
+// and format as clean human-readable string
 function perc_diff (data, key)
 {
 	var a = data['post'][key];
@@ -193,6 +250,28 @@ function perc_diff (data, key)
 	return diff;
 }
 
+function color_for_ext_item (string, item)
+{
+    var status = item['status'];
+    var converted = item['converted'];
+    
+    if (status == 'warn')
+    {
+        return '<u>' + string + '</u>';
+    }
+    else if (status == 'err')
+    {
+        return '<em>' + string + '</em>';
+    }
+    else if (converted)
+    {
+        return '<strong>' + string + '</strong>';
+    }
+    return string;
+}
+
+// set tags for smaller/larger values in pairs
+// for the result of the CSS Optimizer
 function cmp (data, key)
 {
 	var a = data['pre'][key]; 
