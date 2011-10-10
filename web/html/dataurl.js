@@ -2,6 +2,7 @@
 // prep everything once page is loaded
 function Init ()
 {
+    document.getElementById('cssurl').addEventListener("keyup", URLFieldKeyHandler, true);
     document.getElementById('fileinput').addEventListener('change', HandleFileSelect, false);
     
 	if (HasFileAPIs()) 
@@ -87,6 +88,12 @@ function DataURLLoaded ()
     // eval the JSON
     var dict = eval('(' + $("#postframe").contents().text() + ')');
     
+    if ('error' in dict) 
+    {  
+        $("#droparea").html(dict['error']);
+        return;
+    }
+    
     // fill the fields
     $("#dataurltextarea").html(dict['dataurl']);
 	$("#dataurlfilename").html(dict['filename']);
@@ -143,13 +150,14 @@ function ShowLoader (bool)
 {
     if (bool)
     {
+        $("#cssurl").attr('disabled', true);
         $("#status_message").css('display', 'none');
-        $("#css_stats_wrapper").css('display', 'none');
+    	$("#css_output_container").css('display', 'none');
     	$('#ajaxloader_wrapper').css('display', 'block');
     }
     else
     {
-        $("#css_stats_wrapper").css('display', 'block');
+        $("#cssurl").attr('disabled', false);
     	$('#ajaxloader_wrapper').css('display', 'none');
     }
 }
@@ -172,10 +180,10 @@ function OptimizeCSS ()
 			 return;
 		}
 		
-		if (data['error']) {
+		if ('error' in data) {
 		    $("#status_message").html('<em>ERROR: ' + data['error'] + '</em>');
-            $('#ajaxloader_wrapper').css('display', 'none');
             $("#status_message").css('display', 'block');
+            ShowLoader(0);
             return;
 		}
 		
@@ -231,6 +239,7 @@ function OptimizeCSS ()
 		$("#css_output").html('<pre>' + data['css_output'] + '</pre>');
 		$("#css_downloadlink").html('<a href="' + data['css_link'] + '">⇓ Download Optimized CSS</a>')
 		$("#css_output_container").css('display', 'block');
+
 
         ShowLoader(0);
 	});	
@@ -293,4 +302,17 @@ function cmp (data, key)
 		na = '<em>' + a + '</em>';
 	}
 	return [na, nb]
+}
+
+function URLFieldKeyHandler (e)
+{
+    if (e.keyCode) 
+        keycode=e.keyCode;
+    else 
+        keycode=e.which;
+
+    if (keycode != 13)
+        return;
+        
+    OptimizeCSS();
 }

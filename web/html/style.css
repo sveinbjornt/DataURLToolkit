@@ -256,7 +256,6 @@ hr
 #css_stats_wrapper
 {
     width: 100%;
-    display: none;
     padding-bottom: 10px;
 }
 
@@ -302,6 +301,7 @@ hr
 {
 	-webkit-border-radius: 7px; 
 	-moz-border-radius: 7px;
+	border-radius: 7px;
 	border: 2px solid gray;
 	width: 300px;
 	height: 240px;

@@ -17,7 +17,7 @@ our @EXPORT = qw(optimize compress);
 our $VERSION = "1.0";
 our $default_limit = 4096;
 our $default_ua = 'DataURL.Net-CSSOptimizerBot/$VERSION (dataurl.net) ' . POSIX::uname();
-our $timeout = 8;
+our $timeout = 4;
 our $max_css_size = 200 * 1024;
 our $max_ext_obj_size = 200 * 1024;
 
@@ -214,7 +214,7 @@ sub optimize
         $cssinfo{pre}{ext_size} += $fetch_urls{$url}{size}
     }
         
-    # Cal total sizes
+    # Calc total sizes
     $cssinfo{pre}{total_size} = $cssinfo{pre}{css_size} + $cssinfo{pre}{ext_size};
     $cssinfo{pre}{total_gzip_size} = $cssinfo{pre}{css_gzip_size} + $cssinfo{pre}{ext_size};
     
@@ -265,6 +265,7 @@ sub _error
 sub compress
 {
     my ($css) = @_;
+    $css =~ s/\r+//gi;
     $css =~ s/\n+//gi;
     $css =~ s/\t+//gi;
     $css =~ s/(?m)([;:])\s+/$1/gi;
