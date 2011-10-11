@@ -9,6 +9,7 @@ use Encode;
 use DBD::SQLite;
 use Encode;
 use utf8;
+use Data::Dumper;
 
 ## Our variables ##
 my $VERSION = "1.0";
@@ -85,16 +86,16 @@ sub CooldownRemaining
     my $self = shift;
     my $ip = shift;
     
-    if ($ip eq '127.0.0.1') { return 1; } # localhost is always fine
+    #if ($ip eq '127.0.0.1') { return 0; } # localhost is always fine
     
     my $time = time() - $mindelay;
-    my $array_ref = $self->{dbh}->selectall_arrayref("SELECT ip, date FROM entries WHERE date > $time AND error!=1;");
+    my $array_ref = $self->{dbh}->selectall_arrayref("SELECT ip, date FROM entries WHERE date > $time AND error != 1;");
     my @entries = @{$array_ref};
-        
+     
     foreach (@entries) 
     {
         my @arr = @{$_};
-        if ($arr[0] eq $ip) { return (time() - $arr[1] - $mindelay) * -1 ; }
+        if ($arr[0] eq $ip) { return ($time - $arr[1]) * -1 ; }
     }
     return 0;
 }
