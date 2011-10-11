@@ -2,29 +2,39 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>DataURL.net - Home of Data URL Maker, Data URL CSS Optimizer and the Data URL Toolkit</title>
+	<title>DataURL.net - Data URL Maker, Data URL CSS Optimizer and the Data URL Toolkit</title>
     <link rel="stylesheet" href="style.css" type="text/css">
-	<script type="text/javascript" src="jquery.min.js"></script>
+	<!--<script type="text/javascript" src="jquery.min.js"></script>-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="dataurl.js"></script>
+	<link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico">
 </head>
 <body>
 
 <header>
-
-<h1>❮ DataURL.net ❯</h1>
-<h2>✸ Your one-stop HTML5 spot for all things DataURL ✸</h2>
+	<h1>❮ DataURL.net ❯</h1>
+	<h2>✸ Your one-stop HTML5 spot for all things DataURL ✸</h2>
 </header>
 
 <nav>
 	<ul>
-		<li class="litem" name="about" id="selected" onClick="ShowPage('about');"><a href="#about">About</a></li>
-		<li class="litem" name="dataurlmaker" onClick="ShowPage('dataurlmaker');"><a href="#dataurlmaker">Data URL Maker</a></li>
-		<li class="litem" name="cssoptimizer"onClick="ShowPage('cssoptimizer');"><a href="#cssoptimizer">CSS Optimizer</a></li>
-		<li class="litem" name="downloads" onClick="ShowPage('downloads');"><a href="#downloads">Downloads</a></li>
+		<li class="litem" name="about" id="selected" onClick="ShowPage('about');">
+			<a href="#about">About</a>
+		</li>
+		<li class="litem" name="dataurlmaker" onClick="ShowPage('dataurlmaker');">
+			<a href="#dataurlmaker">Data URL Maker</a>
+		</li>
+		<li class="litem" name="cssoptimizer" onClick="ShowPage('cssoptimizer');">
+			<a href="#cssoptimizer">CSS Optimizer</a>
+		</li>
+		<li class="litem" name="downloads" onClick="ShowPage('downloads');">
+			<a href="#downloads">Downloads</a>
+		</li>
 	</ul>
 </nav>
 
 <article>
+	<!-- ABOUT -->
 	<div id="body_about" class="page">
 		
 		<div class='indexbox'>
@@ -42,16 +52,17 @@
 		<p><strong>DATAURL.NET</strong> is home to some open source tools for creating and working with Data URLs 
 			(<a href="http://tools.ietf.org/html/rfc2397">RFC 2397</a>).</p>
 	
-		<p>Two of these tools are <strong>web-based</strong> and available here: 
+		<p>Two of these tools are <strong>web-based</strong> and available here:</p>
 		
-			<ul>
-				<li><a href="#dataurlmaker" onClick="ShowPage('dataurlmaker');"><strong>Data URL Maker</strong></a> converts files to Data URLs.</li>
-				<li><a href="#cssoptimizer" onClick="ShowPage('cssoptimizer');"><strong>CSS Optimizer</strong></a> optimizes CSS files by embedding external images as Data URLs.</li>
-			</ul>
-		</p>
+		<ul>
+			<li><a href="#dataurlmaker" onClick="ShowPage('dataurlmaker');"><strong>Data URL Maker</strong></a> converts files to Data URLs.</li>
+			<li><a href="#cssoptimizer" onClick="ShowPage('cssoptimizer');"><strong>CSS Optimizer</strong></a> optimizes CSS files by embedding external images as Data URLs.</li>
+		</ul>
 	
-		<p>Various modules, code examples and GUI/command line tools for <strong>UNIX systems</strong> are available in <a href="#downloads" onClick="ShowPage('downloads')">Downloads</a>.</p>
+		<p>Various modules, code examples and GUI/command line tools for <strong>UNIX systems</strong> are 
+			available in <a href="#downloads" onClick="ShowPage('downloads')">Downloads</a>.</p>
 	 
+		<br>
 		<br>
 	
 		<hr class="separator">
@@ -98,7 +109,9 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 
 			<p>This HTML tag would display the following image:</p>
 
-<blockquote><img width="11" height="14" src="data:image/gif;base64,R0lGODlhCwAOAMQfAP////7+/vj4+Hh4eHd3d/v7+/Dw8HV1dfLy8ubm5vX19e3t7fr6+nl5edra2nZ2dnx8fMHBwYODg/b29np6eujo6JGRkeHh4eTk5LCwsN3d3dfX13Jycp2dnevr6////yH5BAEAAB8ALAAAAAALAA4AAAVq4NFw1DNAX/o9imAsBtKpxKRd1+YEWUoIiUoiEWEAApIDMLGoRCyWiKThenkwDgeGMiggDLEXQkDoThCKNLpQDgjeAsY7MHgECgx8YR8oHwNHfwADBACGh4EDA4iGAYAEBAcQIg0DkgcEIQA7" alt="File Icon"></blockquote>
+			<blockquote>
+				<img width="11" height="14" src="data:image/gif;base64,R0lGODlhCwAOAMQfAP////7+/vj4+Hh4eHd3d/v7+/Dw8HV1dfLy8ubm5vX19e3t7fr6+nl5edra2nZ2dnx8fMHBwYODg/b29np6eujo6JGRkeHh4eTk5LCwsN3d3dfX13Jycp2dnevr6////yH5BAEAAB8ALAAAAAALAA4AAAVq4NFw1DNAX/o9imAsBtKpxKRd1+YEWUoIiUoiEWEAApIDMLGoRCyWiKThenkwDgeGMiggDLEXQkDoThCKNLpQDgjeAsY7MHgECgx8YR8oHwNHfwADBACGh4EDA4iGAYAEBAcQIg0DkgcEIQA7" alt="File Icon">
+			</blockquote>
 
 			<h3 id="advantages">Advantages of Data URLs</h3>
 
@@ -116,7 +129,7 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 				</li>
 				<li>
 					<strong>Faster transfer of small files</strong>
-					<p>For transferring small files (< 1KB), Data URLs can result in faster downloading. Data transfers via TCP 
+					<p>For transferring small files, Data URLs can result in faster downloading. Data transfers via TCP 
 						start slowly, and each external resource starts a new TCP connection to the server.  The transfer speed 
 						may thus be held back by the overhead of TCP communication.</p>
 				</li>
@@ -199,6 +212,7 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 			<br>
 			<br>
 			<br>
+			
 		</div>
 	</div>
 	
@@ -209,14 +223,15 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 		<div id="fileselectform">
 			<form id="upload-form" target="myiFrame" action="/cgi-bin/dataurl.pl" method="POST" enctype='multipart/form-data' style="display: inline;">
 			<p>Select or drag a file to get the Data URL: 
-					<input type='file' name="file" id='fileinput' style="display: inline;">
-					<input type='hidden' name='action' value='encode' style="display: inline;">
-				</form>	
+				<input type='file' name="file" id='fileinput' style="display: inline;">
+				<input type='hidden' name='action' value='encode' style="display: inline;">
 			</p>
+			</form>
 			<iframe name="myiFrame" id="postframe"></iframe>
 		</div>
 		
-		<div id="droparea" onClicK="">
+		<div id="droparea">
+			
 		</div>
 		
 		<div id="dataurldisplay">
@@ -243,7 +258,7 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 	<div id="body_cssoptimizer" class="page">
 		<h3 class="lowmargin">CSS Optimizer</h3>
 		
-		<div id="fileselectform">
+		<div id="cssform">
 			<p>Specify remote CSS URL 
 				<input type='text' id='cssurl' name='css_file_url' value="http://">
 				<input type="button" value="Optimize" onClick="OptimizeCSS();">
@@ -277,13 +292,14 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 		</div>
 		
 		<hr class="separator">
+				
+		<div id="status_message" style="display: none;"></div>
 		
 		<div id="ajaxloader_wrapper" style="display: none;">
 			<br>
 			<br>
-			<img src="ajax-loader.gif" style="margin: auto;">
+			<img src="ajax-loader.gif" style="margin: auto;" alt="Loading">
 		</div>
-		<div id="status_message" style="display: none;"></div>
 		
 		<div id="css_output_container">
 			<h4 class="lowmargin">Resources</h4>
@@ -291,11 +307,11 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 			<div id="css_resources" style="display: none;"></div>
 				
 			<div id="css_stats_wrapper">
-				<div id="css_stats">
+				<div class="css_stats">
 					<h4 class="lowmargin">Before</h4>
 					<div id="pre_output"></div>
 				</div>
-				<div id="css_stats">
+				<div class="css_stats">
 					<h4 class="lowmargin">After</h4>
 					<div id="post_output"></div>
 				</div>
@@ -312,6 +328,7 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 		</div>
 	</div>
 	
+	<!-- DOWNLOADS -->
 	<div id="body_downloads" class="page">
 		<h3 class="lowmargin">Downloads</h3>
 		
@@ -350,23 +367,31 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 				<strong><a href="http://sveinbjorn.org/dataurls_css">Using Data URLs Effectively with Cascading Style Sheets</a></strong>
 				<p>Old guide on optimizing with Data URLs.</p>
 			</li>
+			<li>
+				<strong><a href="http://www.websiteoptimization.com/speed/tweak/inline-images/">WebsiteOptimization.com</a></strong>
+				<p>Inline Images with Data URLs - embed graphics inline with data uri scheme</p>
+			</li>
+			<li>
+				<strong><a href="http://en.wikipedia.org/wiki/Data_URI_scheme">Data URL Wikipedia Entry</a></strong>
+				<p>Decent Wikipedia article on Data URIs.</p>
+			</li>
 		</ul>
 		
 		<br>
 		<br>
 		<br>
+		
 	</div>
 	
-	
 </article>
-
-<script type="text/javascript" lang="javascript">
-     $(document).ready(Init);
-</script>
 
 <footer>
 	&copy; 2011 <a onmouseover="this.href='mailto:'+'sveinbjornt'+ '@' + 'gmail' + '.' +'com';" style="cursor: pointer;" href="#">Sveinbjorn Thordarson</a>.  All code GNU <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>'d. Powered by <a href="http://perl.org">Perl</a> and <a href="http://apache.org">Apache</a> on <a href="http://www.debian.org/">Debian</a>.
 </footer>
+
+<script type="text/javascript">
+     $(document).ready(Init);
+</script>
 
 </body>
 </html>

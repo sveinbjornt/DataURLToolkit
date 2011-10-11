@@ -103,7 +103,7 @@ header
     width: 200px; 
     background-color: #eee; 
     font-size: 0.9em; 
-    padding: 15px; 
+    padding: 11px; 
     margin-left: 25px;
 }
 
@@ -264,26 +264,26 @@ hr
     margin: 0;
 }
 
-#css_stats
+.css_stats
 {
     float: left;
     width: 320px;
 }
 
-#css_stats p
+.css_stats p
 {
     margin: 3px;
     font-size: 13px;
 }
 
-#css_stats strong
+.css_stats strong
 {
     background-color: green;
     color: white;
     padding: 3px;
 }
 
-#css_stats em
+.css_stats em
 {
     background-color: #a00;
     color: white;

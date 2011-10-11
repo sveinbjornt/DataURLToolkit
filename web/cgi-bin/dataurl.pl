@@ -16,8 +16,6 @@ use SQLiteLogger;
 
 my $dataurlmaker_hardlimit = 200 * 1024;
 
-#if($ENV{REQUEST_METHOD} ne 'POST') { error("Illegal request.", 403); }
-
 use vars qw($logdb); # Shared dictionary of databases
 
 if (!defined($logdb)) 
@@ -29,12 +27,13 @@ if (!defined($logdb))
 local our $remote_ip    = $ENV{'REMOTE_ADDR'};
 local our $user_agent   = $ENV{'HTTP_USER_AGENT'};
 
-
 local our $cgi = new CGI;
 local our $action = $cgi->param('action');
 
 if ($action eq 'encode')
 {    
+    if($ENV{REQUEST_METHOD} ne 'POST') { error("Illegal request.", 403); }
+    
     # Read file data
     my $filehandle = $cgi->upload('file');
     my $data = undef;
@@ -63,24 +62,23 @@ if ($action eq 'encode')
 elsif ($action eq 'optimize') 
 {
     # IP-based cooldown for this expensive operation
-    local our $cooldown = $logdb->CooldownRemaining($remote_ip);
-    if ($cooldown)
+    my $cooldown = $logdb->CooldownRemaining($remote_ip);
+    if ($cooldown > 0)
     {
+        warn($cooldown);
         error("Cooldown in effect to prevent hammering of the server.  Please wait $cooldown seconds before trying again.", '200 OK');
     }
     
     # Read parameters
-    
     my $url = $cgi->param('css_file_url');
     if (!$url) { error("Empty URL provided", '200 OK'); }
     
     # Is it a URI?
     if(!is_http_uri($url) and !is_https_uri($url)) {   error("The provided URL is invalid.", '200 OK')}
     
-    
+    # Calc these vals based on params 
     my $limit = $cgi->param('size_limit') ? $cgi->param('size_limit') * 1024 : undef;
     my $compress = ($cgi->param('compress') eq 'on') ? 1 : 0;
-
 
     # Optimize
     my $cssinfo_hashref = DataURL::CSS::optimize($url, $limit, $compress);

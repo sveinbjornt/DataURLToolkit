@@ -162,14 +162,36 @@ function ShowLoader (bool)
     }
 }
 
+function ShowOptimizeError(errmsg)
+{
+    $("#status_message").html('<em>ERROR: ' + errmsg + '</em>');
+    $("#status_message").css('display', 'block');
+    ShowLoader(0);
+}
+
 // Call server-side application, and display 
 // its response in a prettified way
 function OptimizeCSS ()
 {
+    // Cooldown check.  This is still enforced server-side
+    // but saves us requests to the server unless the user
+    // actually bothers to disable this
+    var unixtime = Math.round((new Date()).getTime() / 1000);
+    var lastRequest = 0;
+    var cookieStr = ReadCookie('lastRequest');
+    if (cookieStr != null) { lastRequest = parseInt(cookieStr); }
+    if (lastRequest > unixtime - 5)
+    {
+        ShowOptimizeError('Cooldown in effect.  Please try again in ' + ((unixtime - 5 - lastRequest) * -1) + ' seconds.');
+        return;
+    }
+    
 	var limit = $('#css_sizelimit').val();
 	var compress = $('input:checkbox[name=compress]:checked').val();
-	
+    
 	ShowLoader(1);
+	
+	document.cookie = "lastRequest=" + unixtime + '; expires=Monday, 31-Dec-2081 05:00:00 GMT; path=/';
 	
 	var href = '/cgi-bin/dataurl.pl?action=optimize&compress=' + compress + '&size_limit=' + limit + '&css_file_url=' + $('#cssurl').val()
 	$.get(href, function(data) 
@@ -180,12 +202,7 @@ function OptimizeCSS ()
 			 return;
 		}
 		
-		if ('error' in data) {
-		    $("#status_message").html('<em>ERROR: ' + data['error'] + '</em>');
-            $("#status_message").css('display', 'block');
-            ShowLoader(0);
-            return;
-		}
+		if ('error' in data) { ShowOptimizeError(data['error']); return; }
 		
 		// Generate ext. resources list
 		var listhtml = '<tr><td width="25"><span>Req.</span></td><td width="40%"><span>Remote URL</span></td><td><span>Mime-Type</span></td><td><span>Size</span></td><td width="35%"><span>Status</span></td>';
@@ -302,6 +319,19 @@ function cmp (data, key)
 		na = '<em>' + a + '</em>';
 	}
 	return [na, nb]
+}
+
+function ReadCookie(name) 
+{
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) 
+    {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
 }
 
 function URLFieldKeyHandler (e)
