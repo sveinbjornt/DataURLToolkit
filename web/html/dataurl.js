@@ -44,16 +44,16 @@ function HasFileAPIs ()
 }
 
 // tab navigation select function
-function ShowPage (pname)
+function ShowPage (a_element)
 {
     // show relevant block for the page
 	$(".page").css("display", "none");
-	$("#body_" + pname).css("display","block");
-	window.location.hash = '#' + pname;
+	$("#body_" + a_element).css("display","block");
+	window.location.hash = '#' + a_element;
 	
 	// Remove selected style from all, add to selected item
 	$(".litem").attr("id","");
-	$('li[name=' + pname + ']').attr("id", 'selected');
+	$('li[name=' + a_element + ']').attr("id", 'selected');
 }
 
 // file selection handler for data url maker

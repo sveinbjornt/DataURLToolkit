@@ -2,8 +2,7 @@
 body
 {
 	font-family: "Monaco", "Andale Mono", "Courier", "Courier New";
-	background-image: url("bg.jpg");
-	background-color: #ddd;
+	background-color: #dcdcdc;
 	padding: 0;
 	margin: 0;
 	text-align: center;

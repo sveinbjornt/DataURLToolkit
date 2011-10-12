@@ -11,9 +11,28 @@ use utf8;
 use MIME::Base64;
 use IO::Scalar;
 use File::MimeInfo::Magic qw(mimetype);
+use DataURL::Util;
 
 our @EXPORT = qw(dataurl_from_dataref dataurl_from_filepath dataurl_from_filehandle);
 our $VERSION = "1.0";
+
+sub data_from_dataurl
+{
+    my ($dataurl) = @_;
+    my $dataurl = strip($dataurl);
+    
+    if ($dataurl !~ m/^data\:/) 
+    { 
+        warn("Not a Data RUL: $dataurl");
+        return undef; 
+    }
+    
+    my $mime_type = $dataurl =~ m/data\:(.+);base64/;
+    my $base64data = split('base64,', $dataurl)[1];
+    my $rawdata = decode_base64($base64data);
+    
+    return (\$rawdata, $mime_type);
+}
 
 sub dataurl_from_filepath
 {
