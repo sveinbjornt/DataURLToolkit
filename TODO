@@ -1,0 +1,4 @@
+* Add support for // URLs
+* Use YUI compressor for CSS compression
+* Reverse data URL decode?
+* Update Apache module, flesh out DataURL module family
