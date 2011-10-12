@@ -1,5 +1,5 @@
 
-// prep everything once page is loaded
+/* prep everything once page is loaded */
 function Init ()
 {
     document.getElementById('cssurl').addEventListener("keyup", URLFieldKeyHandler, true);
@@ -37,32 +37,32 @@ function Init ()
 	}
 }
 
-// tells us whether browser has File API support
+/* tells us whether browser has File API support*/
 function HasFileAPIs ()
 {
     return (window.File && window.FileReader && window.FileList && window.Blob);
 }
 
-// tab navigation select function
+/* tab navigation select function*/
 function ShowPage (a_element)
 {
-    // show relevant block for the page
+    /* show relevant block for the page*/
 	$(".page").css("display", "none");
 	$("#body_" + a_element).css("display","block");
 	window.location.hash = '#' + a_element;
 	
-	// Remove selected style from all, add to selected item
+	/* Remove selected style from all, add to selected item*/
 	$(".litem").attr("id","");
 	$('li[name=' + a_element + ']').attr("id", 'selected');
 }
 
-// file selection handler for data url maker
+/* file selection handler for data url maker*/
 function HandleFileSelect(evt) 
 {
     if (!HasFileAPIs()) 
     {
-        // without File APIs, we submit form in background into iframe
-        // and read the resulting JSON in the onload handler
+        /* without File APIs, we submit form in background into iframe
+           and read the resulting JSON in the onload handler*/
         var frame = document.getElementById('postframe');
         frame.onload = DataURLLoaded;
         $("#upload-form").submit();
@@ -70,22 +70,22 @@ function HandleFileSelect(evt)
     }
     else
     {
-        // with the File APIs, we can just get the file object
-        // and start working with it, no server-side processing required
-        var files = evt.target.files; // FileList object
+        /* with the File APIs, we can just get the file object
+           and start working with it, no server-side processing required */
+        var files = evt.target.files;
     	var file = files[0];
     	ReadDataFile(file);
     }
 }
 
-// handler function when Data URL Maker form submission has finished
-// in the hidden iframe.  Result should be JSON text containing the 
-// DataURL and file info
+/* handler function when Data URL Maker form submission has finished
+   in the hidden iframe.  Result should be JSON text containing the 
+   DataURL and file info */
 function DataURLLoaded ()
 {
     if ($("#postframe").contents().text() == '') { return; }
     
-    // eval the JSON
+    /* eval the JSON */
     var dict = eval('(' + $("#postframe").contents().text() + ')');
     
     if ('error' in dict) 
@@ -94,7 +94,7 @@ function DataURLLoaded ()
         return;
     }
     
-    // fill the fields
+    /* fill the fields */
     $("#dataurltextarea").html(dict['dataurl']);
 	$("#dataurlfilename").html(dict['filename']);
 	$("#droparea").css('display', 'none');
@@ -108,13 +108,13 @@ function DataURLLoaded ()
 }
 
 
-// Read through entire data file from File APIs
-// and fill fields with values
+/* Read through entire data file from File APIs
+  and fill fields with values */
 function ReadDataFile (file)
 {
 	var reader = new FileReader();
 	
-	// Handler function called once file is loaded.
+	/* Handler function called once file is loaded.  */
 	reader.onload = (function(theFile) {
   		return function(e) {
 			var suffix = theFile.name.split('.').pop();
@@ -131,11 +131,11 @@ function ReadDataFile (file)
 			$("#dataurldisplay").css('display', 'block');
 	};})(file);
 
-	// Read in the image file as a data URL.
+	/* Read in the image file as a data URL. */
 	reader.readAsDataURL(file);
 }
 
-// Function drop file
+/* Function drop file */
 function handleDrop (event)
 {
 	event.preventDefault();
@@ -169,13 +169,13 @@ function ShowOptimizeError(errmsg)
     ShowLoader(0);
 }
 
-// Call server-side application, and display 
-// its response in a prettified way
+/* Call server-side application, and display 
+   its response in a prettified way */
 function OptimizeCSS ()
 {
-    // Cooldown check.  This is still enforced server-side
-    // but saves us requests to the server unless the user
-    // actually bothers to disable this
+    /* Cooldown check.  This is still enforced server-side
+       but saves us requests to the server unless the user
+       actually bothers to disable this  */
     var unixtime = Math.round((new Date()).getTime() / 1000);
     var lastRequest = 0;
     var cookieStr = ReadCookie('lastRequest');
@@ -204,7 +204,7 @@ function OptimizeCSS ()
 		
 		if ('error' in data) { ShowOptimizeError(data['error']); return; }
 		
-		// Generate ext. resources list
+		/* Generate ext. resources list */
 		var listhtml = '<tr><td width="25"><span>Req.</span></td><td width="40%"><span>Remote URL</span></td><td><span>Mime-Type</span></td><td><span>Size</span></td><td width="35%"><span>Status</span></td>';
 		for (var key in data['ext_objects']) 
 		{
@@ -257,13 +257,12 @@ function OptimizeCSS ()
 		$("#css_downloadlink").html('<a href="' + data['css_link'] + '">⇓ Download Optimized CSS</a>')
 		$("#css_output_container").css('display', 'block');
 
-
         ShowLoader(0);
 	});	
 }
 
-// calculate percentage difference between two values
-// and format as clean human-readable string
+/* calculate percentage difference between two values
+   and format as clean human-readable string */
 function perc_diff (data, key)
 {
 	var a = data['post'][key];
@@ -296,8 +295,8 @@ function color_for_ext_item (string, item)
     return string;
 }
 
-// set tags for smaller/larger values in pairs
-// for the result of the CSS Optimizer
+/* set tags for smaller/larger values in pairs
+ for the result of the CSS Optimizer */
 function cmp (data, key)
 {
 	var a = data['pre'][key]; 

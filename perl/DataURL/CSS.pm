@@ -246,7 +246,7 @@ sub optimize
     $cssinfo{post}{total_gzip_size} = $cssinfo{post}{css_gzip_size} + $cssinfo{post}{ext_size};
     
     # Compress CSS, if specified
-    if ($compress) { $css = compress($css); }
+    if ($compress) { $css = compress_css($css); }
     $cssinfo{css_output} = $css;
     
     # Add the dict of remote urls, for resource status on client side
@@ -262,7 +262,7 @@ sub _error
     return \%reply;
 }
 
-sub compress
+sub compress_css
 {
     my ($css) = @_;
     $css =~ s/\r+//gi;
@@ -272,8 +272,9 @@ sub compress
     $css =~ s/\s*}\s*/}\n/gi;
     $css =~ s/\s*{\s*/{/gi;
     $css =~ s/[ \t]*,[ \t]*/,/gi;
-    $css =~ s/^\s+//;
-    $css =~ s/\s+$//;
+    $css =~ s/^\s+//gi;
+    $css =~ s/\s+$//gi;
+    $css =~ s/\n+//gi;
     return $css;
 }
 

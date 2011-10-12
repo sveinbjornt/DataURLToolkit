@@ -3,8 +3,9 @@
 rsync -az --progress -rvv --force  web/*    root@dataurl.net:/www/dataurl
 rsync -az --progress -rvv --force  modules/*  root@dataurl.net:/www/dataurl/cgi-bin/
 
-perl command_line_tools/compress_css.pl web/html/style.css > /tmp/RANDOMNAME.css 
+# Use YUI compressor to compress CSS and JavaScript
+java -jar yui-compressor/yuicompressor.jar --type css --charset utf8 -v web/html/style.css > /tmp/RANDOMNAME.css 
 scp /tmp/RANDOMNAME.css root@dataurl.net:/www/dataurl/html/style.css
 
-perl command_line_tools/compress_html.pl web/html/style.css > /tmp/RANDOMNAME.html 
-scp /tmp/RANDOMNAME.html root@dataurl.net:/www/dataurl/html/index.html
+java -jar yui-compressor/yuicompressor.jar --type js --charset utf8 -v web/html/dataurl.js > /tmp/RANDOMNAME.js
+scp /tmp/RANDOMNAME.js root@dataurl.net:/www/dataurl/html/dataurl.js
