@@ -23,18 +23,12 @@ function Init ()
     	$("#droparea").html('<br><br>Drag file here');
 	}
 	else
-	{
 	    $("#droparea").html('<br><br>Select file');
-	}
 	
     if (window.location.hash)
-    {
 	    ShowPage(window.location.hash.substring(1)); 
-	}
 	else
-	{
 	    ShowPage('about');
-	}
 }
 
 /* tells us whether browser has File API support*/
@@ -63,19 +57,13 @@ function HandleFileSelect(evt)
     {
         /* without File APIs, we submit form in background into iframe
            and read the resulting JSON in the onload handler*/
-        var frame = document.getElementById('postframe');
-        frame.onload = DataURLLoaded;
+        document.getElementById('postframe').onload = DataURLLoaded;
         $("#upload-form").submit();
-        
+        return;
     }
-    else
-    {
-        /* with the File APIs, we can just get the file object
-           and start working with it, no server-side processing required */
-        var files = evt.target.files;
-    	var file = files[0];
-    	ReadDataFile(file);
-    }
+    /* with the File APIs, we can just get the file object
+       and start working with it, no server-side processing required */
+    ReadDataFile(evt.target.files[0]);
 }
 
 /* handler function when Data URL Maker form submission has finished
@@ -83,10 +71,11 @@ function HandleFileSelect(evt)
    DataURL and file info */
 function DataURLLoaded ()
 {
-    if ($("#postframe").contents().text() == '') { return; }
+    var dict, contents = $("#postframe").contents().text();
+    if (contents == '') { return; }
     
     /* eval the JSON */
-    var dict = eval('(' + $("#postframe").contents().text() + ')');
+    dict = eval('(' + contents + ')');
     
     if ('error' in dict) 
     {  
@@ -94,16 +83,15 @@ function DataURLLoaded ()
         return;
     }
     
-    /* fill the fields */
+    /* fill in the fields */
     $("#dataurltextarea").html(dict['dataurl']);
 	$("#dataurlfilename").html(dict['filename']);
 	$("#droparea").css('display', 'none');
 	$("#dataurlfilesize").html('Data URL Size: ' + dict['size'] + ' bytes<br>Gzipped URL size: ' + dict['gzipsize'] + ' bytes<br>Original size: ' + dict['origsize'] + ' bytes');
-	if (dict['image']) {
+	if (dict['image'])
 		$("#dataurlimg").html('<img src="' + dict['dataurl'] + '">')
-	} else {
+	else
 		$("#dataurlimg").html('Not an image');
-	}
 	$("#dataurldisplay").css('display', 'block');
 }
 
@@ -122,12 +110,10 @@ function ReadDataFile (file)
 			$("#dataurlfilename").html(theFile.name)
 			$("#droparea").css('display', 'none');
 			$("#dataurlfilesize").html('Data URL Size: ' + e.target.result.length + ' bytes<br>Original size: ' + theFile.size + ' bytes');
-			if (suffix == 'jpg' || suffix == 'png' || suffix == 'gif' || suffix == 'jpeg' ||
-				suffix == 'JPG' || suffix == 'PNG' || suffix == 'GIF' || suffix == 'JPEG') {
+			if (/^jpg|png|gif|jpeg$/i.test(suffix))
 				$("#dataurlimg").html('<img src="' + e.target.result + '">')
-			} else {
+			else
 				$("#dataurlimg").html('Not an image');
-			}
 			$("#dataurldisplay").css('display', 'block');
 	};})(file);
 
@@ -140,10 +126,7 @@ function handleDrop (event)
 {
 	event.preventDefault();
 	event.stopPropagation();
- 	var dt = event.dataTransfer;
- 	var files = dt.files;
-	var file = files[0];
-	ReadDataFile(file);
+	ReadDataFile(event.dataTransfer.files[0]);
 }
 
 function ShowLoader (bool)
@@ -162,7 +145,7 @@ function ShowLoader (bool)
     }
 }
 
-function ShowOptimizeError(errmsg)
+function OptimizerError(errmsg)
 {
     $("#status_message").html('<em>ERROR: ' + errmsg + '</em>');
     $("#status_message").css('display', 'block');
@@ -173,43 +156,37 @@ function ShowOptimizeError(errmsg)
    its response in a prettified way */
 function OptimizeCSS ()
 {
+    var unixtime = Math.round((new Date()).getTime() / 1000), 
+        lastRequest = 0, 
+        cookieStr = ReadCookie('lastRequest'), 
+        limit = $('#css_sizelimit').val(), 
+        compress = $('input:checkbox[name=compress]:checked').val(),
+        href = '/cgi-bin/dataurl.pl?action=optimize&compress=' + compress + '&size_limit=' + limit + '&css_file_url=' + $('#cssurl').val();
+        
     /* Cooldown check.  This is still enforced server-side
        but saves us requests to the server unless the user
        actually bothers to disable this  */
-    var unixtime = Math.round((new Date()).getTime() / 1000);
-    var lastRequest = 0;
-    var cookieStr = ReadCookie('lastRequest');
+       
     if (cookieStr != null) { lastRequest = parseInt(cookieStr); }
     if (lastRequest > unixtime - 5)
     {
-        ShowOptimizeError('Cooldown in effect.  Please try again in ' + ((unixtime - 5 - lastRequest) * -1) + ' seconds.');
+        OptimizerError('Cooldown in effect.  Please try again in ' + ((unixtime - 5 - lastRequest) * -1) + ' seconds.');
         return;
     }
     
-	var limit = $('#css_sizelimit').val();
-	var compress = $('input:checkbox[name=compress]:checked').val();
-    
 	ShowLoader(1);
+	SetCookie('lastRequest=' + unixtime);
 	
-	document.cookie = "lastRequest=" + unixtime + '; expires=Monday, 31-Dec-2081 05:00:00 GMT; path=/';
-	
-	var href = '/cgi-bin/dataurl.pl?action=optimize&compress=' + compress + '&size_limit=' + limit + '&css_file_url=' + $('#cssurl').val()
 	$.get(href, function(data) 
-	{
-		if (data == undefined) 
-		{
-			 alert("ERROR:  NO DATA FROM SERVER.");
-			 return;
-		}
-		
-		if ('error' in data) { ShowOptimizeError(data['error']); return; }
+	{		
+		if ('error' in data) { OptimizerError(data['error']); return; }
 		
 		/* Generate ext. resources list */
 		var listhtml = '<tr><td width="25"><span>Req.</span></td><td width="40%"><span>Remote URL</span></td><td><span>Mime-Type</span></td><td><span>Size</span></td><td width="35%"><span>Status</span></td>';
 		for (var key in data['ext_objects']) 
 		{
             var dict = data['ext_objects'][key];
-            var row = '<tr><td>' + dict['req'] + '</td><td><a href="' + dict['full_url'] + '">' + key + '</a></td><td>' + dict['mime_type'] + '</td><td>' + dict['size'] + '</td><td>' + color_for_ext_item(dict['status_msg'], dict) +' </td></tr>';
+            var row = '<tr><td>' + dict['req'] + '</td><td><a href="' + dict['full_url'] + '">' + key + '</a></td><td>' + dict['mime_type'] + '</td><td>' + dict['size'] + '</td><td>' + StatusStyleExtItem(dict['status_msg'], dict) +' </td></tr>';
             listhtml += row;
         }
         listhtml = '<table width="100%">' + listhtml + '</table><br>';
@@ -222,36 +199,36 @@ function OptimizeCSS ()
 		
 		$("#css_output").html('');
 		
-		var arr = cmp(data, 'requests');
+		var arr = CmpVals(data, 'requests');
 		$("#pre_output").append('<p>' + arr[0] + ' requests</p>');
-		$("#post_output").append('<p>' + arr[1] + ' requests (' + perc_diff(data, 'requests') + '%)</p>');
+		$("#post_output").append('<p>' + arr[1] + ' requests (' + PcDiff(data, 'requests') + '%)</p>');
 				
 		$("#post_output").append('<p></p>');
 		$("#pre_output").append('<p></p>');
 		
-		var arr = cmp(data, 'ext_objects');
+		arr = CmpVals(data, 'ext_objects');
 		$("#pre_output").append('<p>' + arr[0] + ' ext. objects</p>');
-		$("#post_output").append('<p>' + arr[1] + ' ext. objects (' + perc_diff(data, 'ext_objects') + '%)</p>');
+		$("#post_output").append('<p>' + arr[1] + ' ext. objects (' + PcDiff(data, 'ext_objects') + '%)</p>');
 		
-		var arr = cmp(data, 'ext_size');
+		arr = CmpVals(data, 'ext_size');
 		$("#pre_output").append('<p>' + arr[0] + ' bytes ext. obj. size</p>');
-		$("#post_output").append('<p>' + arr[1] + ' bytes ext. obj. size (' + perc_diff(data, 'ext_size') + '%)</p>');
+		$("#post_output").append('<p>' + arr[1] + ' bytes ext. obj. size (' + PcDiff(data, 'ext_size') + '%)</p>');
 				
-		var arr = cmp(data, 'img_size');
+		arr = CmpVals(data, 'img_size');
 		$("#pre_output").append('<p>' + arr[0] + ' bytes ext. image size</p>');
-		$("#post_output").append('<p>' + arr[1] + ' bytes ext. image size (' + perc_diff(data, 'img_size') + '%)</p>');
+		$("#post_output").append('<p>' + arr[1] + ' bytes ext. image size (' + PcDiff(data, 'img_size') + '%)</p>');
 		
-		var arr = cmp(data, 'css_size');
+		arr = CmpVals(data, 'css_size');
 		$("#pre_output").append('<p>' + arr[0] + ' bytes CSS size</p>');
-		$("#post_output").append('<p>' + arr[1] + ' bytes CSS size (' + perc_diff(data, 'css_size') + '%)</p>');
+		$("#post_output").append('<p>' + arr[1] + ' bytes CSS size (' + PcDiff(data, 'css_size') + '%)</p>');
 		
-		var arr = cmp(data, 'total_size');
+		arr = CmpVals(data, 'total_size');
 		$("#pre_output").append('<p>' + arr[0] + ' bytes uncompressed' + '</p>');
-		$("#post_output").append('<p>' + arr[1] + ' bytes uncompressed (' + perc_diff(data, 'total_size') + '%)</p>');
+		$("#post_output").append('<p>' + arr[1] + ' bytes uncompressed (' + PcDiff(data, 'total_size') + '%)</p>');
 		
-		var arr = cmp(data, 'total_gzip_size');
+		arr = CmpVals(data, 'total_gzip_size');
 		$("#pre_output").append('<p>' + arr[0] + ' bytes gzipped</p>');
-		$("#post_output").append('<p>' + arr[1] + ' bytes gzipped ('+ perc_diff(data, 'total_gzip_size') +'%)</p>');
+		$("#post_output").append('<p>' + arr[1] + ' bytes gzipped ('+ PcDiff(data, 'total_gzip_size') +'%)</p>');
 		
 		$("#css_output").html('<pre>' + data['css_output'] + '</pre>');
 		$("#css_downloadlink").html('<a href="' + data['css_link'] + '">⇓ Download Optimized CSS</a>')
@@ -262,46 +239,45 @@ function OptimizeCSS ()
 }
 
 /* calculate percentage difference between two values
-   and format as clean human-readable string */
-function perc_diff (data, key)
+   and format as a clean human-readable string */
+function PcDiff (data, key)
 {
-	var a = data['post'][key];
-	var b = data['pre'][key];
-	if (b == 0 && a) { return '100'; } else if (a == 0 && b == 0) { return '0'; }
+	var a = data['post'][key], 
+	    b = data['pre'][key], 
+	    diff;
 	
-	var diff = ((a/b) - 1.0) * 100;
-	diff = diff.toFixed(1)
-	if (diff >= 0) { diff = '+' + diff; }
+	if (b == 0 && a)
+	    return '100';
+	else if (a == 0 && b == 0)
+	    return '0';
+	
+	diff = ((a/b) - 1.0) * 100;
+	diff = diff.toFixed(1);
+	
+	if (diff >= 0)
+	    diff = '+' + diff;
 	return diff;
 }
 
-function color_for_ext_item (string, item)
+// style external object item in Resources list
+function StatusStyleExtItem (string, item)
 {
-    var status = item['status'];
-    var converted = item['converted'];
+    var status = item['status'], converted = item['converted'];
     
     if (status == 'warn')
-    {
         return '<u>' + string + '</u>';
-    }
     else if (status == 'err')
-    {
         return '<em>' + string + '</em>';
-    }
     else if (converted)
-    {
         return '<strong>' + string + '</strong>';
-    }
     return string;
 }
 
-/* set tags for smaller/larger values in pairs
+/* set style tags for smaller/larger values in pairs
  for the result of the CSS Optimizer */
-function cmp (data, key)
+function CmpVals (data, key)
 {
-	var a = data['pre'][key]; 
-	var b = data['post'][key];
-	var na,nb;
+	var a = data['pre'][key], b = data['post'][key], na, nb;
 	if (a < b) 
 	{ 
 		na = '<strong>' + a + '</strong>';
@@ -320,17 +296,23 @@ function cmp (data, key)
 	return [na, nb]
 }
 
-function ReadCookie(name) 
+function ReadCookie (name) 
 {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) 
+    var nameEQ = name + "=", ca = document.cookie.split(';'), c, i;
+    for (i = 0; i < ca.length; i++) 
     {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        c = ca[i];
+        while (c.charAt(0) == ' ') 
+            c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) 
+            return c.substring(nameEQ.length, c.length);
     }
     return null;
+}
+
+function SetCookie (val)
+{
+    document.cookie = val + '; expires=Monday, 31-Dec-2081 05:00:00 GMT; path=/';
 }
 
 function URLFieldKeyHandler (e)
