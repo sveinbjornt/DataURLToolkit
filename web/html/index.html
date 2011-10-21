@@ -136,7 +136,7 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 				</li>
 				<li>
 					<strong>Faster HTTPS</strong>
-					<p>HTTPS requests have much greater overhead than ordinary HTTP requests duing to SSL encryption, etc.  
+					<p>HTTPS requests have much greater overhead than ordinary HTTP requests due to SSL encryption.  
 						If your website is served over HTTPS, providing resources via Data URLs can improve performance significantly.</p>
 				</li>
 			</ul>
@@ -167,21 +167,21 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 					<strong>No support in old versions of Internet Explorer</strong>
 					<p>Internet Explorer versions prior to version 8 do not support Data URLs at all.  There are 
 						several work-arounds for this, whereby you can  gain the benefits of Data URLs for other browsers while 
-						serving old and shitty browsers traditional images.</p>
+						serving older browsers traditional images.</p>
 				</li>
 
 				<li>
 					<strong>Base64 encoding increases data size</strong>
 					<p>Base64-encoded Data URLs are 33% larger in size than their binary counterparts.  However, if you use 
-						gzip content encoding on your webserver, this is reduced to between 5-10%.</p>
+						gzip content encoding on your webserver, this is reduced to between 0-10%.</p>
 				</li>
 				<li>
 					<strong>Size limitations</strong>
 					<p>According to the Data URL specification, browsers need only support Data URLs up to 1024 bytes long.  
 						Most browsers, however, will accept much larger ones.  Opera limits Data URLs to about 4100 characters, 
-						Firefox up to 100 KB, Internet Explorer about 32 KB, and WebKit (Safari) doesn't seem to have any limit at all.  
-						Typically, however, the benefits of using Data URLs disappear at with larger images, so they are best used 
-						only for small (~1K) images.</p>
+						Firefox (Mozilla ) up to 100 KB, Internet Explorer about 32 KB, and WebKit (Safari) doesn't seem to have 
+						any limit at all.  Typically, however, the benefits of using Data URLs disappear at with larger images, 
+						so they are best used only for small (~1-4KB) images.</p>
 				</li>
 			</ul>
 
@@ -190,11 +190,10 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
 			<p>Data URIs are currently supported by the following web browsers:</p>
 
 			<ul>
-				<li>Firefox and all browsers that use the Gecko rendering engine</li>
-				<li>Safari and other WebKit-based browsers</li>
+				<li>Firefox and all browsers that use the Mozilla Foundation's Gecko rendering engine</li>
+				<li>Safari, Chrome and other WebKit-based browsers</li>
 				<li>Opera</li>
 				<li>Konqueror</li>
-				<li>Google Chrome</li>
 				<li>Internet Explorer 8+ (with certain limitations)</li>
 			</ul>
 			

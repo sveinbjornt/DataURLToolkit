@@ -9,3 +9,4 @@ scp /tmp/RANDOMNAME.css root@dataurl.net:/www/dataurl/html/style.css
 
 java -jar yui-compressor/yuicompressor.jar --type js --charset utf8 -v web/html/dataurl.js > /tmp/RANDOMNAME.js
 scp /tmp/RANDOMNAME.js root@dataurl.net:/www/dataurl/html/dataurl.js
+
