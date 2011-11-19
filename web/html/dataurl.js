@@ -133,14 +133,16 @@ function ShowLoader (bool)
 {
     if (bool)
     {
-        $("#cssurl").attr('disabled', true);
+        $('#optimizebutton').attr('disabled', 'disabled');
+        $("#cssurl").attr('disabled', 'disabled');
         $("#status_message").css('display', 'none');
     	$("#css_output_container").css('display', 'none');
     	$('#ajaxloader_wrapper').css('display', 'block');
     }
     else
     {
-        $("#cssurl").attr('disabled', false);
+        $('#optimizebutton').removeAttr('disabled');
+        $('#cssurl').removeAttr('disabled');
     	$('#ajaxloader_wrapper').css('display', 'none');
     }
 }
