@@ -14,7 +14,7 @@ use DataURL::Encode qw(dataurl_from_dataref);
 use Data::Validate::URI qw(is_http_uri is_https_uri);
 use SQLiteLogger;
 
-my $dataurlmaker_hardlimit = 200 * 1024;
+my $dataurlmaker_hardlimit = 250 * 1024;
 
 use vars qw($logdb); # Shared dictionary of databases
 

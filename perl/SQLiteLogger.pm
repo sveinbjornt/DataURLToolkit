@@ -13,7 +13,7 @@ use Data::Dumper;
 
 ## Our variables ##
 my $VERSION = "1.0";
-my $mindelay = 5;
+my $mindelay = 4;
 my $db_path = "log.db";
 
 sub new

@@ -16,10 +16,10 @@ use DataURL::Util;
 our @EXPORT = qw(optimize compress);
 our $VERSION = "1.0";
 our $default_limit = 4096;
-our $default_ua = 'DataURL.Net-CSSOptimizerBot/$VERSION (dataurl.net) ' . POSIX::uname();
+our $default_ua = "DUTKBot/$VERSION (dataurl.net) " . POSIX::uname();
 our $timeout = 4;
-our $max_css_size = 200 * 1024;
-our $max_ext_obj_size = 200 * 1024;
+our $max_css_size = 250 * 1024;
+our $max_ext_obj_size = 250 * 1024;
 
 sub optimize
 {
@@ -49,9 +49,9 @@ sub optimize
     }
     
     my $mime_type = $response->header('content-type');
-    if ($mime_type ne 'text/css' and $mime_type ne 'text/plain') 
+    if ($mime_type !~ m/^text\/css/ and $mime_type !~ m/^text\/plain/) 
     {
-        return _error("Remote file is not a CSS document.  Declared mime type is $mime_type");
+        return _error("Remote file is not a CSS document.  Declared mime type is $mime_type.");
     }
     
     my $css_size = $response->header('content-length');
