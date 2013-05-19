@@ -48,34 +48,34 @@ EOF
 # check num arguments
 if (!scalar(@ARGV))
 {
-	main::HELP_MESSAGE();
-	exit;
+    main::HELP_MESSAGE();
+    exit;
 }
 
 # Iterate through files, print out data URL for each in turn
 foreach my $file(@ARGV)
 {
-	if (! -e $file)
-	{
-		warn("$file: no such file.  Skipping...");
-		next;
-	}
+    if (! -e $file)
+    {
+        warn("$file: no such file.  Skipping...");
+        next;
+    }
 
-	# Get Image Info
+    # Get Image Info
         my $info = image_info($file);
         my $mimetype = $info->{file_media_type};
         my($image_width, $image_height) = dim($info);
 
-	my $data;
-	open(FILE, "$file") or die("Error opening file '$file' for reading");
-	binmode FILE;
-	while (<FILE>) { $data .= $_; }
-	close(FILE);
+    my $data;
+    open(FILE, "$file") or die("Error opening file '$file' for reading");
+    binmode FILE;
+    while (<FILE>) { $data .= $_; }
+    close(FILE);
 
-	my $enc = encode_base64($data, '');
-	my $imghtml = '<img src="data:' . $mimetype . ';base64,' . $enc . "\" width=\"$image_width\" height=\"$image_height\">";
+    my $enc = encode_base64($data, '');
+    my $imghtml = '<img src="data:' . $mimetype . ';base64,' . $enc . "\" width=\"$image_width\" height=\"$image_height\">";
 
-	print "-----------\n$file:\n$imghtml\n";
+    print "-----------\n$file:\n$imghtml\n";
 }
 
 exit(0);

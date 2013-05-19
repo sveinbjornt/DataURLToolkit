@@ -24,7 +24,7 @@
 
 @interface DragImageView : NSImageView 
 {
-	IBOutlet id delegate;
+    IBOutlet id delegate;
 }
 -(void)setDelegate: (id)dg;
 @end

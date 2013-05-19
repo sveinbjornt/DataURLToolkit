@@ -16,11 +16,11 @@ echo "-> Creating DataURLToolkit.tgz"
 tar cvfz /tmp/DataURLToolkit.tgz .
 mv /tmp/DataURLToolkit.tgz web/html/downloads/DataURLToolkit.tgz
 
-echo "-> Creating DataURL-Modules.tgz"
-tar cvfz web/html/downloads/DataURL-Modules.tgz modules
+# echo "-> Creating DataURL-Modules.tgz"
+# tar cvfz web/html/downloads/DataURL-Modules.tgz modules
 
 echo "-> Creating dataurlmaker.tgz"
 tar cvfz web/html/downloads/dataurlmaker.tgz command_line_tools/dataurlmaker.pl
 
-echo "-> Creating Apache-DataURL.tgz"
-tar cvfz web/html/downloads/Apache-DataURL.tgz apache/Apache-DataURL.pm
+# echo "-> Creating Apache-DataURL.tgz"
+# tar cvfz web/html/downloads/Apache-DataURL.tgz apache/Apache-DataURL.pm

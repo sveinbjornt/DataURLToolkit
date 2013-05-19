@@ -25,16 +25,16 @@
 
 @interface DataURLMakerController : NSObject 
 {
-	IBOutlet id window;
-	IBOutlet id	dataURLTextField;
-	IBOutlet id	imgTagCheckbox;
-	IBOutlet id	sizeTextField;
-	IBOutlet id mimeTypeTextField;
-	IBOutlet id encSizeTextField;
-	IBOutlet id imageView;
-	IBOutlet id imageViewLabel;
-	IBOutlet id windowShader;
-	IBOutlet id progressIndicator;
+    IBOutlet id window;
+    IBOutlet id    dataURLTextField;
+    IBOutlet id    imgTagCheckbox;
+    IBOutlet id    sizeTextField;
+    IBOutlet id mimeTypeTextField;
+    IBOutlet id encSizeTextField;
+    IBOutlet id imageView;
+    IBOutlet id imageViewLabel;
+    IBOutlet id windowShader;
+    IBOutlet id progressIndicator;
 }
 -(IBAction)copyToClipboard: (id)sender;
 -(IBAction)selectFile: (id)sender;

@@ -26,22 +26,22 @@
 
 -(void)setDelegate: (id)dg
 {
-		delegate = dg;
+        delegate = dg;
 }
 
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
 {
-	return [delegate performDragOperation: sender];
+    return [delegate performDragOperation: sender];
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender 
 {
-	return [delegate draggingEntered: sender];
+    return [delegate draggingEntered: sender];
 }
 
 - (void)draggingExited:(id <NSDraggingInfo>)sender
 {
-	[delegate draggingExited: sender];
+    [delegate draggingExited: sender];
 }
 
 @end
