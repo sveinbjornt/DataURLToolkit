@@ -14,16 +14,21 @@ use DataURL::Encode qw(dataurl_from_dataref);
 use Data::Validate::URI qw(is_http_uri is_https_uri);
 use SQLiteLogger;
 
+use vars qw($logdb $tmp_public_dir); # Shared dictionary of databases
+
+
 my $dataurlmaker_hardlimit = 250 * 1024;
-my $tmp_public_dir = '/www/dataurl/html/tmp/';
+$tmp_public_dir = '/www/dataurl/html/tmp/';
 
-use vars qw($logdb); # Shared dictionary of databases
 
-if (!defined($logdb)) 
+
+if (!$logdb) 
 {
     $logdb = new SQLiteLogger;
-    if (!$logdb) { error("Could not connect to database.", '200 OK'); }
 }
+
+if (!$logdb) { error("Could not connect to database.", '200 OK'); }
+
 
 local our $remote_ip    = $ENV{'REMOTE_ADDR'};
 local our $user_agent   = $ENV{'HTTP_USER_AGENT'};
@@ -119,6 +124,7 @@ sub reply
     print "Status: $status\n";
     print STDOUT "Content-Type: application/json\n\n";
     print STDOUT $json;
+    
     $logdb->Log($status, defined($hashref->{error}), time(), $remote_ip, $json);
     
     exit(0);

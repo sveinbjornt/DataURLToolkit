@@ -1,6 +1,6 @@
 #!/bin/sh
 
-rsync -az --progress -rvv --force  web/*    root@dataurl.net:/www/dataurl
+rsync -az --progress -rvv --exclude web/tmp/log.db --force  web/*    root@dataurl.net:/www/dataurl
 rsync -az --progress -rvv --force  perl/*  root@dataurl.net:/www/dataurl/cgi-bin/
 
 # Use minifier script to minify HTML

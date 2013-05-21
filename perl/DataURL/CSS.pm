@@ -56,17 +56,27 @@ sub optimize
     }
     
     my $css_size = $response->header('content-length');
-    if ($css_size > $max_css_size)
+    if ($css_size && $css_size > $max_css_size)
     {
         return _error("CSS size ($css_size) exceeds maximum ($max_css_size)");
     }
-    
+        
     # OK, the file seems fine.  Let's fetch it properly using GET.
     $request = HTTP::Request->new(GET => $css_url);
     $response = $ua->request($request);
     
+    if (!$response->is_success) 
+    {
+        return _error("Failed to fetch CSS document. Status:  " . $response->status_line);
+    }
+    
     # Get content
-    my $css = $response->decoded_content();
+    my $css = $response->content();
+    
+    if (!length($css)) 
+    {
+        return _error("Remote file is empty. Status:  " . $response->status_line);
+    }
     
     # Find and clean all strings contained within url()
     my (@matches) = $css =~ m/url\s?\(\s?"?'?(\s?.+\s?)'?"?\)/ig;
@@ -280,6 +290,7 @@ sub _error
 {
     my ($msg) = @_;
     my %reply = ( 'error' => $msg );
+    warn($msg);
     return \%reply;
 }
 
