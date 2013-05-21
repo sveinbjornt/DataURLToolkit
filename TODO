@@ -1,6 +1,4 @@
 * Fix overflow on long URLs
-* Show image compression savings
-* CSS download link should work
 * JSON API documentation, + pretty url rewrites
 * Add support for // URLs
 * Reverse data URL decode?

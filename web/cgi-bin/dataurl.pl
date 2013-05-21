@@ -15,6 +15,7 @@ use Data::Validate::URI qw(is_http_uri is_https_uri);
 use SQLiteLogger;
 
 my $dataurlmaker_hardlimit = 250 * 1024;
+my $tmp_public_dir = '/www/dataurl/html/tmp/';
 
 use vars qw($logdb); # Shared dictionary of databases
 
@@ -84,12 +85,27 @@ elsif ($action eq 'optimize')
     # Optimize
     my $cssinfo_hashref = DataURL::CSS::optimize($url, $limit, $compress, $optimg);
     
+    $cssinfo_hashref->{css_filename} = write_css_file($cssinfo_hashref->{css_output});
+    
     # Reply with info dict
     reply($cssinfo_hashref);
 }
 else
 {
     error('Illegal request', 403);
+}
+
+sub write_css_file
+{
+    my ($css) = @_;
+    my $fn = 'opt-' . rand() . '.css';
+    my $path = $tmp_public_dir . $fn;
+    
+    open(FILE, "+>$path") or (warn("Could not write $path") and return);
+    print FILE $css;
+    close(FILE);
+    
+    return $fn;
 }
 
 sub reply

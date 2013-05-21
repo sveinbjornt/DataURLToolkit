@@ -255,7 +255,7 @@ function OptimizeCSS ()
         }
         
         $("#css_output").html('<pre>' + data['css_output'] + '</pre>');
-        $("#css_downloadlink").html('<a href="' + data['css_link'] + '">⇓ Download Optimized CSS</a>')
+        $("#css_downloadlink").html('<a href="/tmp/' + data['css_filename'] + '">⇓ Download Optimized CSS</a>')
         $("#css_output_container").css('display', 'block');
         
         ShowLoader(0);
