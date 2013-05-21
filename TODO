@@ -1,7 +1,8 @@
+* Fix overflow on long URLs
+* Show image compression savings
+* CSS download link should work
 * JSON API documentation, + pretty url rewrites
 * Add support for // URLs
 * Reverse data URL decode?
 * Update Apache module, flesh out DataURL module family
-* CSS download link should work
 * Ajax loader for data url maker ajax
-* Remember URL in CSS optimizer
