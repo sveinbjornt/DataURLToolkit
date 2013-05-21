@@ -79,7 +79,9 @@ sub optimize
     }
     
     # Find and clean all strings contained within url()
-    my (@matches) = $css =~ m/url\s?\(\s?"?'?(\s?.+\s?)'?"?\)/ig;
+    #my (@matches) = $css =~ m/url\s?\(\s?"?'?(\s?.+\s?)'?"?\)/ig;
+    my (@matches) = $css =~ m/url[\s]*\([\s]*(?<url>[^\)]*)[\s]*\)[\s]*/ig;
+    
     foreach (@matches) { $_ = DataURL::Util::clean_url_value($_); }
     
     # Create CSS info dict 
