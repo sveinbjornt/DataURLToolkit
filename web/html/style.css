@@ -256,6 +256,7 @@ hr
 #css_stats_wrapper p
 {
     margin: 0;
+    line-height: 23px;
 }
 
 .css_stats
