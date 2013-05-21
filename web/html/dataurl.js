@@ -5,6 +5,13 @@ function Init ()
     document.getElementById('cssurl').addEventListener("keyup", URLFieldKeyHandler, true);
     document.getElementById('fileinput').addEventListener('change', HandleFileSelect, false);
     
+    if (Boolean(ReadCookie('compress_css')) == 'true') 
+    {
+        $('#compress_css').prop('checked', true);
+    }
+    
+    $('#cssurl').val(ReadCookie('css_url'));
+    
     if (HasFileAPIs()) 
     {
         var uploadPlace =  document.getElementById('droparea');
@@ -148,6 +155,12 @@ function ShowLoader (bool)
     }
 }
 
+function CompressCSSClicked(elem)
+{
+    var val = $(elem).prop('checked');
+    SetCookie('compress_css=' + val);
+}
+
 function OptimizerError(errmsg)
 {
     $("#status_message").html('<em>ERROR: ' + errmsg + '</em>');
@@ -164,12 +177,15 @@ function OptimizeCSS ()
         cookieStr = ReadCookie('lastRequest'), 
         limit = $('#css_sizelimit').val(), 
         compress = $('input:checkbox[name=compress]:checked').val(),
-        href = '/cgi-bin/dataurl.pl?action=optimize&compress=' + compress + '&size_limit=' + limit + '&css_file_url=' + $('#cssurl').val();
-        
+        optimg = $('input:checkbox[name=optimize_images]:checked').val(),
+        href = '/cgi-bin/dataurl.pl?action=optimize&compress=' + compress + '&optimize_images=' + optimg + '&size_limit=' + limit + '&css_file_url=' + $('#cssurl').val();
+    
+    // save remote URL into cookie
+    SetCookie('css_url=' + $('#cssurl').val());
+    
     /* Cooldown check.  This is still enforced server-side
        but saves us requests to the server unless the user
-       actually bothers to disable this  */
-       
+       actually bothers to disable cookies to fool us.  */
     if (cookieStr != null) { lastRequest = parseInt(cookieStr); }
     if (lastRequest > unixtime - 5)
     {
@@ -216,11 +232,11 @@ function OptimizeCSS ()
         arr = CmpVals(data, 'ext_size');
         $("#pre_output").append('<p>' + arr[0] + ' bytes ext. obj. size</p>');
         $("#post_output").append('<p>' + arr[1] + ' bytes ext. obj. size (' + PcDiff(data, 'ext_size') + '%)</p>');
-                
+        
         arr = CmpVals(data, 'img_size');
         $("#pre_output").append('<p>' + arr[0] + ' bytes ext. image size</p>');
         $("#post_output").append('<p>' + arr[1] + ' bytes ext. image size (' + PcDiff(data, 'img_size') + '%)</p>');
-        
+                
         arr = CmpVals(data, 'css_size');
         $("#pre_output").append('<p>' + arr[0] + ' bytes CSS size</p>');
         $("#post_output").append('<p>' + arr[1] + ' bytes CSS size (' + PcDiff(data, 'css_size') + '%)</p>');
@@ -233,10 +249,15 @@ function OptimizeCSS ()
         $("#pre_output").append('<p>' + arr[0] + ' bytes gzipped</p>');
         $("#post_output").append('<p>' + arr[1] + ' bytes gzipped ('+ PcDiff(data, 'total_gzip_size') +'%)</p>');
         
+        if (data['post']['imgoptim_reduction']) {
+            arr = CmpVals(data, 'imgoptim_reduction');
+            $("#post_output").append('<br><p>' + arr[1] + ' bytes (img optimization)</p>');
+        }
+        
         $("#css_output").html('<pre>' + data['css_output'] + '</pre>');
         $("#css_downloadlink").html('<a href="' + data['css_link'] + '">⇓ Download Optimized CSS</a>')
         $("#css_output_container").css('display', 'block');
-
+        
         ShowLoader(0);
     });    
 }

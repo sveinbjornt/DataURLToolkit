@@ -79,9 +79,10 @@ elsif ($action eq 'optimize')
     # Calc these vals based on params 
     my $limit = $cgi->param('size_limit') ? $cgi->param('size_limit') * 1024 : undef;
     my $compress = ($cgi->param('compress') eq 'on') ? 1 : 0;
+    my $optimg = ($cgi->param('optimize_images') eq 'on') ? 1 : 0;
 
     # Optimize
-    my $cssinfo_hashref = DataURL::CSS::optimize($url, $limit, $compress);
+    my $cssinfo_hashref = DataURL::CSS::optimize($url, $limit, $compress, $optimg);
     
     # Reply with info dict
     reply($cssinfo_hashref);

@@ -80,8 +80,8 @@
             <h3 id="history">History</h3>
 
             <p>The data URL scheme was defined in <a href="http://tools.ietf.org/html/rfc2397">RFC 2397</a> 
-                specification of the <a href="http://www.ietf.org/">Internet Engineering Task Force</a>.  
-                Although the IETF published the Data URL specification in 1998, it was never formally adopted 
+                specification of the <a href="http://www.ietf.org/">Internet Engineering Task Force</a>. 
+                  Although the IETF published the Data URL specification in 1998, it was never formally adopted 
                 as a standard. However, the HTML 4.01 specification references the data URI scheme through 
                 which Data URLs are implemented, and after years of neglect, support for Data URLs in some 
                 form or another has now been implemented in all modern browsers, including Internet Explorer 8.</p>
@@ -254,8 +254,10 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
     <div id="body_cssoptimizer" class="page">
         <h3 class="lowmargin">CSS Optimizer</h3>
         
+        <p>Type in a URL below and the CSS optimizer will fetch your stylesheet and convert all linked image resources into Data URLs.</p> 
+        
         <div id="cssform">
-            <p>Specify remote CSS URL 
+            <p><strong>Remote CSS URL</strong> 
                 <input type='text' id='cssurl' name='css_file_url' value="http://">
                 <input type="button" id='optimizebutton' value="Optimize" onClick="OptimizeCSS();">
             </p>
@@ -282,8 +284,8 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
                     <option value="100">100 KB</option>
                     <option value="10000000000">Infinity</option>
                 </select>    
-                | <input type="checkbox" id="compress_css" name="compress">Compress CSS
-                <!--| <input type="checkbox" name="optimize_pngs">Optimize PNGs-->
+                | <input type="checkbox" id="compress_css" name="compress" onClick="CompressCSSClicked(this);">Minify CSS
+                | <input type="checkbox" name="optimize_images">Optimize images (slow)
             </p>
         </div>
         
@@ -312,6 +314,8 @@ gcEIQA7" alt="File Icon"&gt;</blockquote>
                     <div id="post_output"></div>
                 </div>
                 <div style="clear: both;"></div>
+                <br>
+                <br>
                 <br>
                 <div id="css_container">
                     <div id="css_downloadlink"></div>

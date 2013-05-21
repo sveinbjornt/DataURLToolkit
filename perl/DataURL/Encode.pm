@@ -61,7 +61,7 @@ sub dataurl_from_dataref
     my $iofh = new IO::Scalar $data_ref;
     my $mime_type = mimetype($iofh);
     
-    if (!$mime_type) 
+    if (!$mime_type)
     {
         warn("Unable to determine mimetype of data " . $data_ref);
         return undef;

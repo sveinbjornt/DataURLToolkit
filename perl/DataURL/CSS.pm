@@ -12,9 +12,10 @@ use POSIX;
 use HTTP::Request;
 use LWP::UserAgent;
 use DataURL::Util;
+use DataURL::ImageOptimization;
 
 our @EXPORT = qw(optimize compress);
-our $VERSION = "1.0";
+our $VERSION = "1.1";
 our $default_limit = 4096;
 our $default_ua = "DUTKBot/$VERSION (dataurl.net) " . POSIX::uname();
 our $timeout = 4;
@@ -23,7 +24,7 @@ our $max_ext_obj_size = 250 * 1024;
 
 sub optimize
 {
-    my ($css_url, $limit, $compress) = @_;
+    my ($css_url, $limit, $compress, $optimg) = @_;
     
     # Verify args and defaults
     if (!defined($css_url)) { return _error("Empty URL"); }
@@ -99,6 +100,7 @@ sub optimize
     $cssinfo{pre}{ext_objects} = scalar(keys(%fetch_urls));
     $cssinfo{pre}{requests} = 1 + $cssinfo{pre}{ext_objects};
     $cssinfo{pre}{img_size} = 0;
+    $cssinfo{pre}{imgoptim_reduction} = 0;
     $cssinfo{pre}{ext_size} = 0;
     $cssinfo{pre}{total_size} = 0;
     $cssinfo{dataurl_converted} = 0;
@@ -198,7 +200,7 @@ sub optimize
         # and then encode it to base64 and save the dataurl for it for find/replace
         if ($fetch_urls{$url}{image})
         {
-            my $datasize = length($data);
+            my $datasize = length($data), my $opt_datasize = undef;
             if ($datasize >= $limit)
             {
                 $fetch_urls{$url}{status_msg} = "Skipping, image size gt $limit";
@@ -206,6 +208,13 @@ sub optimize
             }
             else
             {
+                if ($optimg) 
+                {
+                    $data = DataURL::ImageOptimization::optimize_image_data($data, $fetch_urls{$url}{mime_type});
+                    $opt_datasize = length($data);
+                    $cssinfo{pre}{imgoptim_reduction} += ($datasize - $opt_datasize); 
+                }
+                
                 my $data_url = DataURL::Encode::dataurl_from_dataref(\$data);
                 $replace_map{$url} = $data_url;
             }
@@ -236,18 +245,20 @@ sub optimize
         }
     }
     
-    # Calculate post-optimization properties
-    $cssinfo{post}{css_size} = length($css);
-    $cssinfo{post}{data_urls} = $cssinfo{pre}{data_urls} + $cssinfo{dataurl_converted};
-    $cssinfo{post}{ext_objects} = $cssinfo{pre}{ext_objects} - $cssinfo{dataurl_converted};
-    $cssinfo{post}{requests} = 1 + $cssinfo{post}{ext_objects};
-    $cssinfo{post}{total_size} = $cssinfo{post}{css_size} + $cssinfo{post}{ext_size};
-    $cssinfo{post}{css_gzip_size} = length(Compress::Zlib::compress($css));
-    $cssinfo{post}{total_gzip_size} = $cssinfo{post}{css_gzip_size} + $cssinfo{post}{ext_size};
-    
     # Compress CSS, if specified
     if ($compress) { $css = compress_css($css); }
     $cssinfo{css_output} = $css;
+    
+    # Calculate post-optimization properties
+    $cssinfo{post}{css_size} = length($cssinfo{css_output});
+    $cssinfo{post}{data_urls} = $cssinfo{pre}{data_urls} + $cssinfo{dataurl_converted};
+    $cssinfo{post}{ext_objects} = $cssinfo{pre}{ext_objects} - $cssinfo{dataurl_converted};
+    $cssinfo{post}{requests} = 1 + $cssinfo{post}{ext_objects};
+    $cssinfo{post}{imgoptim_reduction} = -$cssinfo{pre}{imgoptim_reduction};
+    $cssinfo{pre}{imgoptim_reduction} = 0;
+    $cssinfo{post}{total_size} = $cssinfo{post}{css_size} + $cssinfo{post}{ext_size};
+    $cssinfo{post}{css_gzip_size} = length(Compress::Zlib::compress($css));
+    $cssinfo{post}{total_gzip_size} = $cssinfo{post}{css_gzip_size} + $cssinfo{post}{ext_size};
     
     # Add the dict of remote urls, for resource status on client side
     $cssinfo{ext_objects} = \%fetch_urls;
