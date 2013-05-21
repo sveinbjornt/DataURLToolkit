@@ -195,12 +195,14 @@ sub optimize
         }
         
         my $data = $response->content;
+        my $datasize = length($data);
+        $fetch_urls{$url}{size} = $datasize;
         
         # If we're dealing with an image, we check if it's not too big,
         # and then encode it to base64 and save the dataurl for it for find/replace
         if ($fetch_urls{$url}{image})
         {
-            my $datasize = length($data), my $opt_datasize = undef;
+            my $opt_datasize = undef;
             if ($datasize >= $limit)
             {
                 $fetch_urls{$url}{status_msg} = "Skipping, image size gt $limit";
@@ -218,9 +220,17 @@ sub optimize
                 my $data_url = DataURL::Encode::dataurl_from_dataref(\$data);
                 $replace_map{$url} = $data_url;
             }
+        }
+    }
+    
+    # Calc total ext object / ext img size
+    foreach my $url (keys(%fetch_urls)) 
+    {
+        if ($fetch_urls{$url}{image}) 
+        {
             $cssinfo{pre}{img_size} += $fetch_urls{$url}{size};
         }
-        $cssinfo{pre}{ext_size} += $fetch_urls{$url}{size}
+        $cssinfo{pre}{ext_size} += $fetch_urls{$url}{size};
     }
         
     # Calc total sizes
