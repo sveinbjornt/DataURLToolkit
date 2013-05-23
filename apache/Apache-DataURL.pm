@@ -30,74 +30,74 @@ my %cache;
 sub handler 
 {
     my $r = shift;
-	my $text;
+    my $text;
 
-	my $cssfile = $r->filename();
-	
-	if (defined($cache{$cssfile}))
-	{
-		$text = $cache{$cssfile};
-	}
-	else
-	{
-		open(FILE, $cssfile) or die("Could not read css file $cssfile");
-		my @lines = <FILE>;
-		close(FILE);
-		$text = join(//, @lines);
-		$text = dataurlifyCSS($text, $r);
-		$cache{$cssfile} = $text;
-	}
+    my $cssfile = $r->filename();
+    
+    if (defined($cache{$cssfile}))
+    {
+        $text = $cache{$cssfile};
+    }
+    else
+    {
+        open(FILE, $cssfile) or die("Could not read css file $cssfile");
+        my @lines = <FILE>;
+        close(FILE);
+        $text = join(//, @lines);
+        $text = dataurlifyCSS($text, $r);
+        $cache{$cssfile} = $text;
+    }
 
-	$r->content_type('text/css');
-	print $text;
-	
+    $r->content_type('text/css');
+    print $text;
+    
     return Apache2::Const::OK;
 }
 
 sub dataurlifyCSS
 {
-	my $text = shift;
-	my $r = shift;
-	
-	#while ($text =~ m/url\((.+\.gif.*?|.+\.png.*?|.+\.jpg.*?|.+\.jpeg.*?)\)/ig)
-	while ($text =~ m/\s*url\(\s*["']?([^"']+(\.gif|\.png|\.jpg|\.jpeg))["']?\s*\)/ig)
-	{
-		my $url = $1;		
-		if ($url =~ m/^data\:/) { next; } # Already a Data URL
-				
-		my $sr = $r->lookup_uri("\"$url");
-		my $rc = $sr->run();
-		my $pi = $sr->path_info();
-		my $mimetype = $sr->content_type();
-		my $path = $ENV{DOCUMENT_ROOT} . $pi;
-		
-		my $dataurl = dataurlForFilePath($path, $mimetype);
-		
-		if (defined($dataurl))
-		{
-			$text =~ s/$1/$dataurl/ig;	
-		}
-	}
-	return $text;	
+    my $text = shift;
+    my $r = shift;
+    
+    #while ($text =~ m/url\((.+\.gif.*?|.+\.png.*?|.+\.jpg.*?|.+\.jpeg.*?)\)/ig)
+    while ($text =~ m/\s*url\(\s*["']?([^"']+(\.gif|\.png|\.jpg|\.jpeg))["']?\s*\)/ig)
+    {
+        my $url = $1;        
+        if ($url =~ m/^data\:/) { next; } # Already a Data URL
+                
+        my $sr = $r->lookup_uri("\"$url");
+        my $rc = $sr->run();
+        my $pi = $sr->path_info();
+        my $mimetype = $sr->content_type();
+        my $path = $ENV{DOCUMENT_ROOT} . $pi;
+        
+        my $dataurl = dataurlForFilePath($path, $mimetype);
+        
+        if (defined($dataurl))
+        {
+            $text =~ s/$1/$dataurl/ig;    
+        }
+    }
+    return $text;    
 }
 
 sub dataurlForFilePath
 {
-	my $path = shift;	
-	my $mimetype = shift;
-	
-	my $data;
-	if (! -e $path) { return undef; }
-	
-	open(FILE, $path) or die("Error opening file '$path' for reading");
-	binmode FILE;
-	while (<FILE>) { $data .= $_; }
-	close(FILE);
-	
-	my $enc = encode_base64($data, '');
-	my $imgurl = 'data:' . $mimetype . ';base64,' . $enc;
-	
-	return $imgurl;
+    my $path = shift;    
+    my $mimetype = shift;
+    
+    my $data;
+    if (! -e $path) { return undef; }
+    
+    open(FILE, $path) or die("Error opening file '$path' for reading");
+    binmode FILE;
+    while (<FILE>) { $data .= $_; }
+    close(FILE);
+    
+    my $enc = encode_base64($data, '');
+    my $imgurl = 'data:' . $mimetype . ';base64,' . $enc;
+    
+    return $imgurl;
 }
 
 1;
